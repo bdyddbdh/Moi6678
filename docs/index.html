@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация</title>
+</head>
+<body>
+    <h1>Выберите метод авторизации</h1>
+    <form action="auth_method" method="GET">
+        <label for="login_password">
+            <input type="radio" name="auth_method" id="login_password" value="login_password"> Логин и пароль
+        </label><br>
+        <label for="token">
+            <input type="radio" name="auth_method" id="token" value="token"> Токен
+        </label><br>
+        <input type="submit" value="Далее">
+    </form>
+</body>
+</html>
