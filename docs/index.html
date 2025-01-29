@@ -1,82 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Authorization</title>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <script>
+        function submitData() {
+            let authData = {
+                method: document.querySelector('input[name="auth_method"]:checked').value,
+                value: document.getElementById('input_data').value
+            };
+
+            // Отправка данных обратно в бот
+            window.Telegram.WebApp.sendData(JSON.stringify(authData));
+
+            // Закрыть Mini App
+            window.Telegram.WebApp.close();
+        }
+    </script>
 </head>
 <body>
-  <h2>Выберите метод авторизации</h2>
-  <button id="login-method">Логин и пароль</button>
-  <button id="token-method">Токен</button>
+    <h2>Выберите способ авторизации</h2>
+    <label>
+        <input type="radio" name="auth_method" value="login" checked> Логин и пароль
+    </label><br>
+    <label>
+        <input type="radio" name="auth_method" value="token"> Токен
+    </label>
 
-  <div id="auth-form" style="display: none;">
-    <h3 id="auth-title"></h3>
-    <form id="auth-form-body">
-      <div id="login-field" style="display: none;">
-        <label for="login">Логин:</label>
-        <input type="text" id="login" name="login"><br><br>
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password"><br><br>
-      </div>
-      <div id="token-field" style="display: none;">
-        <label for="token">Токен:</label>
-        <input type="text" id="token" name="token"><br><br>
-      </div>
-      <button type="submit">Отправить</button>
-    </form>
-  </div>
+    <div id="login_form">
+        <h3>Введите ваши данные</h3>
+        <input type="text" id="input_data" placeholder="Введите логин или токен" required><br>
+        <button onclick="submitData()">Подтвердить</button>
+    </div>
 
-  <script>
-    const loginButton = document.getElementById('login-method');
-    const tokenButton = document.getElementById('token-method');
-    const authForm = document.getElementById('auth-form');
-    const authTitle = document.getElementById('auth-title');
-    const loginField = document.getElementById('login-field');
-    const tokenField = document.getElementById('token-field');
-
-    loginButton.addEventListener('click', () => {
-      authTitle.textContent = 'Введите логин и пароль';
-      loginField.style.display = 'block';
-      tokenField.style.display = 'none';
-      authForm.style.display = 'block';
-    });
-
-    tokenButton.addEventListener('click', () => {
-      authTitle.textContent = 'Введите токен';
-      loginField.style.display = 'none';
-      tokenField.style.display = 'block';
-      authForm.style.display = 'block';
-    });
-
-    document.getElementById('auth-form-body').addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      let data = {};
-      if (loginField.style.display === 'block') {
-        data = {
-          method: 'login',
-          login: document.getElementById('login').value,
-          password: document.getElementById('password').value
-        };
-      } else if (tokenField.style.display === 'block') {
-        data = {
-          method: 'token',
-          token: document.getElementById('token').value
-        };
-      }
-
-      // Отправка данных в бота через API или webhook
-      await fetch('https://your-bot-endpoint.com/save-auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-
-      alert('Данные успешно отправлены!');
-    });
-  </script>
+    <div id="instruction" style="display:none;">
+        <p>Инструкция по получению токена:</p>
+        <ol>
+            <li>Перейдите в настройки вашего аккаунта.</li>
+            <li>Найдите раздел для генерации токена.</li>
+            <li>Скопируйте и вставьте токен сюда.</li>
+        </ol>
+    </div>
 </body>
 </html>
