@@ -3,6 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Авторизация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+        h2 {
+            color: #0056b3;
+        }
+        .form-container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #004080;
+        }
+    </style>
     <script>
         function getQueryParam(name) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -54,13 +91,15 @@
 <body>
     <h2>Авторизация</h2>
     <div id="instructions"></div>
-    <div id="loginForm" style="display:none;">
-        <input type="text" id="login" placeholder="Введите логин" required><br>
-        <input type="password" id="password" placeholder="Введите пароль" required><br>
+    <div class="form-container">
+        <div id="loginForm" style="display:none;">
+            <input type="text" id="login" placeholder="Введите логин" required><br>
+            <input type="password" id="password" placeholder="Введите пароль" required><br>
+        </div>
+        <div id="tokenForm" style="display:none;">
+            <input type="text" id="token" placeholder="Введите токен" required><br>
+        </div>
+        <button onclick="submitData()">Подтвердить</button>
     </div>
-    <div id="tokenForm" style="display:none;">
-        <input type="text" id="token" placeholder="Введите токен" required><br>
-    </div>
-    <button onclick="submitData()">Подтвердить</button>
 </body>
 </html>
