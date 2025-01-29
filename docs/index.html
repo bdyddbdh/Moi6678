@@ -5,6 +5,7 @@
     <title>Авторизация</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* Стили остаются без изменений */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -124,6 +125,11 @@
         .input-group {
             margin: 25px 0;
         }
+
+        .sub-step {
+            margin-left: 20px;
+            color: #666;
+        }
     </style>
     <script async src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
@@ -137,18 +143,25 @@
 
                     <div id="pc-instructions">
                         ${generateSteps([
-                            'Откройте сайт в браузере',
-                            'Нажмите F12 → Вкладка "Приложение" → "Cookies"',
-                            'Скопируйте значение параметра "User"'
-                        ])}
+                            'Откройте браузер и перейдите на сайт MirNovel',
+                            'Откройте инструменты разработчика:',
+                            'Нажмите клавишу F12 или кликните правой кнопкой мыши → "Просмотреть код"',
+                            'Перейдите на вкладку "Приложение" (Application/Storage)',
+                            'В левой панели выберите раздел Cookies → домен сайта',
+                            'Найдите параметр User и скопируйте значение из колонки Value'
+                        ], true)}
                     </div>
 
                     <div id="mobile-instructions" class="hidden">
                         ${generateSteps([
-                            'Установите Kiwi Browser',
-                            'Откройте сайт и режим разработчика',
-                            'В разделе Cookies скопируйте значение "User"'
-                        ])}
+                            'Установите браузер с инструментами разработчика:',
+                            'Kiwi Browser, DebugAnywhere или аналогичный',
+                            'Откройте сайт через выбранный браузер',
+                            'Активируйте инструменты разработчика:',
+                            'В Kiwi Browser: Настройки → Режим разработчика',
+                            'Перейдите в раздел Application → Cookies',
+                            'Найдите параметр User и скопируйте значение'
+                        ], true)}
                     </div>
                 `,
                 'login': `
@@ -160,12 +173,24 @@
             }
         };
 
-        function generateSteps(steps) {
-            return steps.map((text, index) => `
-                <div class="step">
-                    <span class="highlight">Шаг ${index + 1}:</span> ${text}
-                </div>
-            `).join('');
+        function generateSteps(steps, withSubsteps = false) {
+            return steps.map((text, index) => {
+                const isSubstep = text.endsWith(':');
+                return `
+                    <div class="step ${isSubstep ? 'sub-step' : ''}">
+                        <span class="highlight">${isSubstep ? '•' : `Шаг ${index + 1}:`}</span> ${text}
+                        ${withSubsteps && index === 1 ? `
+                            <div class="sub-step">${['F12', 'ПКМ → Инспектор'].map(t => `• ${t}`).join('<br>')}</div>
+                        ` : ''}
+                        ${withSubsteps && index === 3 ? `
+                            <div class="sub-step">(В верхнем меню инструментов разработчика)</div>
+                        ` : ''}
+                        ${withSubsteps && index === 4 ? `
+                            <div class="sub-step">(Найдите домен mirnovel в списке)</div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
         }
 
         function getQueryParam(name) {
@@ -187,10 +212,7 @@
             document.title = site;
             document.querySelector('h2').textContent = site;
 
-            // Отображение формы ввода
             document.getElementById(`${method}Form`).style.display = 'block';
-
-            // Загрузка инструкций
             const instructions = siteInstructions[site]?.[method] || `
                 ${generateSteps(['Следуйте стандартной процедуре авторизации'])}
             `;
