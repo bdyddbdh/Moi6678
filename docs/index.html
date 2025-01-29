@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <title>Авторизация</title>
     <script>
-        // Функция для получения параметров из URL
         function getQueryParam(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
         }
 
-        // Функция для инициализации формы в зависимости от выбранного метода
         function initForm() {
-            const authMethod = getQueryParam("method");  // Получаем метод из URL (login или token)
-            const siteName = getQueryParam("site");  // Получаем имя сайта из URL
+            const authMethod = getQueryParam("method");
+            const siteName = getQueryParam("site");
 
             if (authMethod === "login") {
                 document.getElementById('loginForm').style.display = "block";
@@ -30,7 +28,6 @@
             }
         }
 
-        // Функция для отправки данных обратно в бота
         function submitData() {
             let authData = {};
 
@@ -47,33 +44,23 @@
                 };
             }
 
-            // Отправка данных обратно в Telegram
             window.Telegram.WebApp.sendData(JSON.stringify(authData));
-
-            // Закрытие Mini App
             window.Telegram.WebApp.close();
         }
 
-        // Инициализация страницы при загрузке
         window.onload = initForm;
     </script>
 </head>
 <body>
     <h2>Авторизация</h2>
-    
-    <div id="instructions"></div>  <!-- Место для инструкции -->
-
-    <!-- Форма для логина и пароля -->
+    <div id="instructions"></div>
     <div id="loginForm" style="display:none;">
         <input type="text" id="login" placeholder="Введите логин" required><br>
         <input type="password" id="password" placeholder="Введите пароль" required><br>
     </div>
-
-    <!-- Форма для токена -->
     <div id="tokenForm" style="display:none;">
         <input type="text" id="token" placeholder="Введите токен" required><br>
     </div>
-
     <button onclick="submitData()">Подтвердить</button>
 </body>
 </html>
