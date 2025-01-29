@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Авторизация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             color: #333;
             padding: 20px;
+            margin: 0;
         }
         h2 {
             color: #0056b3;
+            text-align: center;
         }
-        .form-container {
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
             background-color: #fff;
             border-radius: 8px;
-            padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
+        }
+        .instructions {
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: center;
         }
         input {
             width: 100%;
@@ -26,18 +35,26 @@
             margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 16px;
         }
         button {
             background-color: #0056b3;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
+            font-size: 16px;
         }
         button:hover {
             background-color: #004080;
+        }
+        .user-info {
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: center;
+            color: #666;
         }
     </style>
     <script>
@@ -49,6 +66,9 @@
         function initForm() {
             const authMethod = getQueryParam("method");
             const siteName = getQueryParam("site");
+            const botUsername = getQueryParam("bot_username");
+
+            document.getElementById('botUsername').innerText = `Добро пожаловать, ${botUsername}!`;
 
             if (authMethod === "login") {
                 document.getElementById('loginForm').style.display = "block";
@@ -89,16 +109,21 @@
     </script>
 </head>
 <body>
-    <h2>Авторизация</h2>
-    <div id="instructions"></div>
-    <div class="form-container">
+    <div class="container">
+        <h2>Авторизация</h2>
+        <div class="instructions" id="instructions"></div>
+
+        <div class="user-info" id="botUsername"></div>
+
         <div id="loginForm" style="display:none;">
             <input type="text" id="login" placeholder="Введите логин" required><br>
             <input type="password" id="password" placeholder="Введите пароль" required><br>
         </div>
+
         <div id="tokenForm" style="display:none;">
             <input type="text" id="token" placeholder="Введите токен" required><br>
         </div>
+
         <button onclick="submitData()">Подтвердить</button>
     </div>
 </body>
