@@ -5,10 +5,10 @@
     <title>Авторизация</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Стили остаются без изменений */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
+            --error-color: #e74c3c;
             --background-color: #f9f9f9;
             --text-color: #333;
         }
@@ -29,6 +29,22 @@
             background: white;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .notification {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-notification {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
         }
 
         h2 {
@@ -173,6 +189,22 @@
             }
         };
 
+        function showNotification(message, type = 'error') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}-notification`;
+            notification.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="currentColor"/>
+                </svg>
+                <div>${message}</div>
+            `;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(notification, container.firstChild);
+            
+            setTimeout(() => notification.remove(), 5000);
+        }
+
         function generateSteps(steps, withSubsteps = false) {
             return steps.map((text, index) => {
                 const isSubstep = text.endsWith(':');
@@ -205,14 +237,39 @@
             document.getElementById('mobile-instructions').classList.toggle('hidden', platform !== 'mobile');
         }
 
+        function validateParams() {
+            const requiredParams = ['method', 'site'];
+            const missingParams = requiredParams.filter(param => !getQueryParam(param));
+            
+            if (missingParams.length > 0) {
+                showNotification(`Отсутствуют обязательные параметры: ${missingParams.join(', ')}`);
+                document.querySelector('.container').classList.add('hidden');
+                return false;
+            }
+            
+            const validMethods = ['token', 'login'];
+            const method = getQueryParam("method");
+            
+            if (!validMethods.includes(method)) {
+                showNotification(`Неподдерживаемый метод авторизации: ${method}`);
+                document.querySelector('.container').classList.add('hidden');
+                return false;
+            }
+            
+            return true;
+        }
+
         function initForm() {
-            const method = getQueryParam("method") || 'token';
-            const site = getQueryParam("site") || 'mirnovel';
+            if (!validateParams()) return;
+
+            const method = getQueryParam("method");
+            const site = getQueryParam("site");
 
             document.title = site;
             document.querySelector('h2').textContent = site;
 
             document.getElementById(`${method}Form`).style.display = 'block';
+            
             const instructions = siteInstructions[site]?.[method] || `
                 ${generateSteps(['Следуйте стандартной процедуре авторизации'])}
             `;
@@ -230,14 +287,14 @@
                 authData.password = document.getElementById('password').value;
                 
                 if (!authData.login || !authData.password) {
-                    alert('Заполните все поля!');
+                    showNotification('Заполните все поля!');
                     return;
                 }
             } else {
                 authData.token = document.getElementById('token').value;
                 
                 if (!authData.token) {
-                    alert('Введите токен!');
+                    showNotification('Введите токен!');
                     return;
                 }
             }
