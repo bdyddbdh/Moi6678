@@ -66,7 +66,7 @@
         }
 
         .step {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             padding: 15px;
             background: white;
             border-left: 4px solid var(--secondary-color);
@@ -140,93 +140,88 @@
         .hidden {
             display: none;
         }
+
+        #welcomeMessage {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 25px;
+        }
     </style>
     <script async src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const siteInstructions = {
             'mirnovel': {
                 'token': `
-                    <h3>Инструкция по получению токена для MirNovel</h3>
+                    <h3>Инструкция по получению токена</h3>
                     <div class="platform-tabs">
                         <div class="platform-tab active" onclick="showPlatform('pc')">ПК</div>
                         <div class="platform-tab" onclick="showPlatform('mobile')">Мобильные</div>
                     </div>
 
                     <div id="pc-instructions">
-                        <div class="step">
-                            <span class="highlight">Шаг 1:</span> Откройте сайт MirNovel в браузере
-                        </div>
-                        <div class="step">
-                            <span class="highlight">Шаг 2:</span> Откройте инструменты разработчика (F12)
-                        </div>
-                        <div class="step">
-                            <span class="highlight">Шаг 3:</span> Перейдите во вкладку "Приложение" → "Cookies"
-                            <div class="code-block">Пример пути: Application → Storage → Cookies</div>
-                        </div>
-                        <div class="step">
-                            <span class="highlight">Шаг 4:</span> Найдите параметр "User" и скопируйте его значение
-                        </div>
+                        ${generateSteps([
+                            'Откройте сайт в браузере',
+                            'Нажмите F12 для открытия инструментов разработчика',
+                            'Перейдите во вкладку "Приложение" → "Cookies"',
+                            'Найдите и скопируйте значение параметра "User"'
+                        ])}
                     </div>
 
                     <div id="mobile-instructions" class="hidden">
-                        <div class="step">
-                            <span class="highlight">Шаг 1:</span> Установите Kiwi Browser из Play Store
-                        </div>
-                        <div class="step">
-                            <span class="highlight">Шаг 2:</span> Откройте сайт MirNovel и активируйте режим разработчика
-                        </div>
-                        <div class="step">
-                            <span class="highlight">Шаг 3:</span> Перейдите в раздел "Application" → "Cookies"
-                        </div>
-                        <div class="step">
-                            <span class="highlight">Шаг 4:</span> Скопируйте значение параметра "User"
-                        </div>
+                        ${generateSteps([
+                            'Установите Kiwi Browser из Play Store',
+                            'Откройте сайт и активируйте режим разработчика',
+                            'Перейдите в раздел "Application" → "Cookies"',
+                            'Скопируйте значение параметра "User"'
+                        ])}
                     </div>
                 `,
                 'login': `
                     <h3>Авторизация через логин/пароль</h3>
-                    <div class="step">
-                        Введите данные вашей учетной записи MirNovel
-                    </div>
+                    ${generateSteps([
+                        'Введите ваш логин и пароль',
+                        'Нажмите кнопку подтверждения',
+                        'Дождитесь проверки данных'
+                    ])}
                 `
             }
         };
+
+        function generateSteps(steps) {
+            return steps.map((text, index) => `
+                <div class="step">
+                    <span class="highlight">Шаг ${index + 1}:</span> ${text}
+                </div>
+            `).join('');
+        }
 
         function getQueryParam(name) {
             return new URLSearchParams(window.location.search).get(name);
         }
 
         function showPlatform(platform) {
-            document.querySelectorAll('.platform-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('[id$="-instructions"]').forEach(el => el.classList.add('hidden'));
-            
-            document.querySelector(`#${platform}-instructions`).classList.remove('hidden');
-            document.querySelector(`[onclick="showPlatform('${platform}')"]`).classList.add('active');
+            document.querySelectorAll('.platform-tab').forEach(tab => 
+                tab.classList.toggle('active', tab.textContent.toLowerCase().includes(platform))
+            );
+            document.getElementById('pc-instructions').classList.toggle('hidden', platform !== 'pc');
+            document.getElementById('mobile-instructions').classList.toggle('hidden', platform !== 'mobile');
         }
 
         function initForm() {
             const method = getQueryParam("method") || 'token';
             const site = getQueryParam("site") || 'mirnovel';
-            const botUsername = getQueryParam("bot_username");
 
-            document.getElementById('botUsername').innerHTML = `
-                Добро пожаловать в <span class="highlight">${site}</span>!<br>
-                Бот: @${botUsername}
+            document.getElementById('welcomeMessage').innerHTML = `
+                Добро пожаловать в <span class="highlight">${site}</span>
             `;
 
-            // Установка инструкций
             const instructions = siteInstructions[site]?.[method] || `
                 <h3>Авторизация через ${method === 'token' ? 'токен' : 'логин'}</h3>
-                <div class="step">
-                    Следуйте стандартной процедуре авторизации для ${site}
-                </div>
+                ${generateSteps(['Следуйте стандартной процедуре авторизации'])}
             `;
 
             document.getElementById('dynamic-instructions').innerHTML = instructions;
-            
-            // Активация соответствующего метода
-            document.getElementById(`method-${method}`).classList.add('active');
-            document.getElementById(`${method}Form`).style.display = 'block';
+            showPlatform('pc');
         }
 
         function submitData() {
@@ -261,7 +256,7 @@
 <body>
     <div class="container">
         <h2>🔐 Система авторизации</h2>
-        <div class="user-info" id="botUsername"></div>
+        <div id="welcomeMessage"></div>
 
         <div class="method-switcher">
             <button id="method-token" class="method-btn">Токен</button>
