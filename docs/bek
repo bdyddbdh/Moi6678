@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --error-color: #e74c3c;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            animation: modalShow 0.3s ease;
+        }
+
+        @keyframes modalShow {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .modal-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .modal-icon {
+            flex-shrink: 0;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .step {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 4px;
+        }
+
+        .platform-tabs {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .platform-tab {
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            background: #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .platform-tab.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+        button.primary {
+            background: var(--secondary-color);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background 0.3s ease;
+            margin-top: 15px;
+        }
+
+        button.primary:hover {
+            background: #2980b9;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+
+        .highlight {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .input-group {
+            margin: 25px 0;
+        }
+
+        .sub-step {
+            margin-left: 30px;
+            color: #666;
+            position: relative;
+        }
+
+        .sub-step::before {
+            content: '•';
+            position: absolute;
+            left: -15px;
+        }
+    </style>
+    <script async src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const siteInstructions = {
+            'mirnovel': {
+                'token': `
+                    <div class="platform-tabs">
+                        <div class="platform-tab active" onclick="showPlatform('pc')">ПК</div>
+                        <div class="platform-tab" onclick="showPlatform('mobile')">Мобильные</div>
+                    </div>
+
+                    <div id="pc-instructions">
+                        ${generateSteps([
+                            'Откройте браузер и перейдите на сайт MirNovel',
+                            'Откройте инструменты разработчика:',
+                            ['Нажмите F12', 'Или кликните ПКМ → "Просмотреть код"'],
+                            'Перейдите во вкладку "Приложение" → "Cookies"',
+                            'Выберите домен сайта в списке',
+                            'Скопируйте значение параметра "User"'
+                        ])}
+                    </div>
+
+                    <div id="mobile-instructions" class="hidden">
+                        ${generateSteps([
+                            'Установите Kiwi Browser из Play Store',
+                            'Откройте сайт в браузере',
+                            'Активируйте режим разработчика:',
+                            ['В настройках браузера', 'Или через меню плагинов'],
+                            'Перейдите в раздел Application → Cookies',
+                            'Найдите и скопируйте значение "User"'
+                        ])}
+                    </div>
+                `,
+                'login': `
+                    ${generateSteps([
+                        'Введите ваш логин и пароль',
+                        'Нажмите кнопку подтверждения'
+                    ])}
+                `
+            }
+        };
+
+        function showModal(message, type = 'error') {
+            const modalHTML = `
+                <div class="modal-overlay" onclick="closeModal(event)">
+                    <div class="modal">
+                        <button class="modal-close" onclick="closeModal(event)">×</button>
+                        <div class="modal-content">
+                            <svg class="modal-icon" width="32" height="32" viewBox="0 0 24 24" fill="${type === 'error' ? '#e74c3c' : '#3498db'}">
+                                <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"/>
+                            </svg>
+                            <div>${message}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function closeModal(e) {
+            if(e.target.closest('.modal-close') || !e.target.closest('.modal')) {
+                document.querySelector('.modal-overlay')?.remove();
+            }
+        }
+
+        function generateSteps(steps, stepNumber = 1) {
+            return steps.map((step, index) => {
+                const currentStep = stepNumber + index;
+                if(Array.isArray(step)) {
+                    return `
+                        <div class="sub-step">
+                            ${step.map(subStep => `<div>${subStep}</div>`).join('')}
+                        </div>
+                    `;
+                }
+                return `
+                    <div class="step">
+                        <span class="highlight">Шаг ${currentStep}:</span> ${step}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getQueryParam(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+
+        function showPlatform(platform) {
+            document.querySelectorAll('.platform-tab').forEach(tab => 
+                tab.classList.toggle('active', tab.textContent.toLowerCase().includes(platform))
+            );
+            document.getElementById('pc-instructions').classList.toggle('hidden', platform !== 'pc');
+            document.getElementById('mobile-instructions').classList.toggle('hidden', platform !== 'mobile');
+        }
+
+        function validateParams() {
+            const requiredParams = ['method', 'site'];
+            const missingParams = requiredParams.filter(param => !getQueryParam(param));
+            
+            if (missingParams.length > 0) {
+                showModal(`Отсутствуют параметры: ${missingParams.join(', ')}`);
+                document.querySelector('.container').classList.add('hidden');
+                return false;
+            }
+            
+            const validMethods = ['token', 'login'];
+            const method = getQueryParam("method");
+            
+            if (!validMethods.includes(method)) {
+                showModal(`Недопустимый метод: ${method}`);
+                document.querySelector('.container').classList.add('hidden');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function initForm() {
+            if (!validateParams()) return;
+
+            const method = getQueryParam("method");
+            const site = getQueryParam("site");
+
+            document.title = site;
+            document.querySelector('h2').textContent = site;
+
+            document.getElementById(`${method}Form`).style.display = 'block';
+            
+            const instructions = siteInstructions[site]?.[method] || `
+                ${generateSteps(['Следуйте стандартной процедуре авторизации'])}
+            `;
+            
+            document.getElementById('dynamic-instructions').innerHTML = instructions;
+            if(method === 'token') showPlatform('pc');
+        }
+
+        function submitData() {
+            const method = getQueryParam("method");
+            let authData = { method };
+
+            if (method === 'login') {
+                authData.login = document.getElementById('login').value;
+                authData.password = document.getElementById('password').value;
+                
+                if (!authData.login || !authData.password) {
+                    showModal('Заполните все поля!');
+                    return;
+                }
+            } else {
+                authData.token = document.getElementById('token').value;
+                
+                if (!authData.token) {
+                    showModal('Введите токен!');
+                    return;
+                }
+            }
+
+            Telegram.WebApp.sendData(JSON.stringify(authData));
+            Telegram.WebApp.close();
+        }
+
+        window.onload = initForm;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2></h2>
+        
+        <div class="instructions" id="dynamic-instructions"></div>
+
+        <div class="input-group">
+            <div id="loginForm" class="hidden">
+                <input type="text" id="login" placeholder="Логин" required>
+                <input type="password" id="password" placeholder="Пароль" required>
+            </div>
+
+            <div id="tokenForm" class="hidden">
+                <input type="text" id="token" placeholder="Введите токен" required>
+            </div>
+        </div>
+
+        <button class="primary" onclick="submitData()">Подтвердить</button>
+    </div>
+</body>
+</html>
