@@ -1,0 +1,30 @@
+{
+  "token": "<div class=\"platform-tabs\">\
+                <div class=\"platform-tab active\" onclick=\"showPlatform('pc')\">ПК</div>\
+                <div class=\"platform-tab\" onclick=\"showPlatform('mobile')\">Мобильные</div>\
+             </div>\
+             <div id=\"pc-instructions\">\
+                " + generateSteps([\
+                    'Откройте браузер и перейдите на сайт MirNovel',\
+                    'Откройте инструменты разработчика:',\
+                    ['Нажмите F12', 'Или кликните ПКМ → \"Просмотреть код\"'],\
+                    'Перейдите во вкладку \"Приложение\" → \"Cookies\"',\
+                    'Выберите домен сайта в списке',\
+                    'Скопируйте значение параметра \"User\"'\
+                ]) + "\
+             </div>\
+             <div id=\"mobile-instructions\" class=\"hidden\">\
+                " + generateSteps([\
+                    'Установите Kiwi Browser из Play Store',\
+                    'Откройте сайт в браузере',\
+                    'Активируйте режим разработчика:',\
+                    ['В настройках браузера', 'Или через меню плагинов'],\
+                    'Перейдите в раздел Application → Cookies',\
+                    'Найдите и скопируйте значение \"User\"'\
+                ]) + "\
+             </div>",
+  "login": generateSteps([
+                'Введите ваш логин и пароль',
+                'Нажмите кнопку подтверждения'
+            ])
+}
