@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -8,9 +8,11 @@
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
+            --success-color: #27ae60;
             --error-color: #e74c3c;
             --background-color: #f9f9f9;
             --text-color: #333;
+            --android-color: #a4c639;
         }
 
         body {
@@ -107,6 +109,17 @@
             font-size: 15px;
         }
 
+        .android-step {
+            border-left-color: var(--android-color);
+        }
+
+        .android-highlight {
+            background: linear-gradient(90deg, var(--android-color), #8bc34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
         .platform-tabs {
             display: flex;
             gap: 8px;
@@ -127,6 +140,37 @@
         .platform-tab.active {
             background: var(--secondary-color);
             color: white;
+        }
+
+        .platform-tab.android {
+            background: var(--android-color);
+            color: white;
+        }
+
+        .platform-tab.android.active {
+            background: #689f38;
+        }
+
+        .download-link {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--android-color), #8bc34a);
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 10px 0;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        .download-link:hover {
+            transform: translateY(-2px);
+            text-decoration: none;
+            color: white;
+        }
+
+        .download-link::before {
+            content: "📱 ";
         }
 
         input {
@@ -181,12 +225,33 @@
             color: #666;
             position: relative;
             font-size: 14px;
+            margin-bottom: 8px;
         }
 
         .sub-step::before {
             content: '•';
             position: absolute;
             left: -12px;
+            color: var(--secondary-color);
+        }
+
+        .android-note {
+            background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+            border: 1px solid var(--android-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .android-note h3 {
+            margin: 0 0 10px 0;
+            color: var(--android-color);
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: var(--primary-color);
         }
 
         @media (max-width: 480px) {
@@ -216,6 +281,11 @@
                 padding: 14px;
                 font-size: 15px;
             }
+
+            .download-link {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
         }
 
         @keyframes modalShow {
@@ -229,7 +299,6 @@
     </style>
     <script async src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Сохранен весь исходный JavaScript функционал без изменений
         async function loadConfig(site) {
             try {
                 const response = await fetch(`configs/${site}.config.json`);
@@ -259,9 +328,12 @@
             document.body.insertAdjacentHTML('beforeend', modalHTML);
         }
 
-        function generateSteps(steps, stepNumber = 1) {
+        function generateSteps(steps, stepNumber = 1, isAndroid = false) {
             return steps.map((step, index) => {
                 const currentStep = stepNumber + index;
+                const stepClass = isAndroid ? 'step android-step' : 'step';
+                const highlightClass = isAndroid ? 'android-highlight' : 'highlight';
+                
                 if(Array.isArray(step)) {
                     return `
                         <div class="sub-step">
@@ -270,8 +342,8 @@
                     `;
                 }
                 return `
-                    <div class="step">
-                        <span class="highlight">Шаг ${currentStep}:</span> ${step}
+                    <div class="${stepClass}">
+                        <span class="${highlightClass}">Шаг ${currentStep}:</span> ${step}
                     </div>
                 `;
             }).join('');
@@ -315,18 +387,37 @@
                 let firstPlatform = true;
                 
                 for (const [platformKey, platformData] of Object.entries(methodConfig.platforms)) {
+                    const isAndroid = platformKey === 'android';
+                    const tabClass = `platform-tab ${isAndroid ? 'android' : ''} ${firstPlatform ? 'active' : ''}`;
+                    
                     tabsHTML += `
-                        <div class="platform-tab ${firstPlatform ? 'active' : ''}" 
+                        <div class="${tabClass}" 
                              data-platform="${platformKey}"
                              onclick="showPlatform('${platformKey}')">
                             ${platformData.name}
                         </div>
                     `;
                     
+                    let platformContent = '';
+                    
+                    if (isAndroid && platformData.downloadLink) {
+                        platformContent += `
+                            <div class="android-note">
+                                <h3>🤖 Рекомендуемый способ</h3>
+                                <p>Самый простой способ получить токен - использовать наше специальное Android-приложение:</p>
+                                <a href="${platformData.downloadLink}" class="download-link" target="_blank">
+                                    Скачать Android-приложение
+                                </a>
+                            </div>
+                        `;
+                    }
+                    
+                    platformContent += generateSteps(platformData.steps, 1, isAndroid);
+                    
                     contentHTML += `
                         <div class="platform-instructions ${firstPlatform ? '' : 'hidden'}" 
                              data-platform="${platformKey}">
-                            ${generateSteps(platformData.steps)}
+                            ${platformContent}
                         </div>
                     `;
                     
