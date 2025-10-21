@@ -10,6 +10,9 @@
             --secondary-color: #3498db;
             --success-color: #27ae60;
             --error-color: #e74c3c;
+            --warning-bg: #fffbe6;
+            --warning-border: #faad14;
+            --warning-text: #594300;
             --background-color: #f9f9f9;
             --text-color: #333;
             --android-color: #a4c639;
@@ -92,6 +95,34 @@
             margin: 0 0 20px;
             font-size: 1.8rem;
         }
+        
+        /* --- НОВЫЙ БЛОК С ПРЕДУПРЕЖДЕНИЕМ --- */
+        .warning-box {
+            background-color: var(--warning-bg);
+            border-left: 5px solid var(--warning-border);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .warning-icon {
+            font-size: 24px;
+            line-height: 1.2;
+            flex-shrink: 0;
+        }
+
+        .warning-text {
+            font-size: 14px;
+            color: var(--warning-text);
+        }
+
+        .warning-text strong {
+            color: #d46b08;
+        }
+        /* --- КОНЕЦ НОВОГО БЛОКА --- */
 
         .instructions {
             background: #f8f9fa;
@@ -489,6 +520,15 @@
 <body>
     <div class="container">
         <h2></h2>
+
+        <!-- --- НОВЫЙ БЛОК С ПРЕДУПРЕЖДЕНИЕМ --- -->
+        <div class="warning-box">
+            <div class="warning-icon">⚠️</div>
+            <div class="warning-text">
+                <strong>ВНИМАНИЕ:</strong> Использование неофициальных методов авторизации может нарушать условия использования сервиса и привести к блокировке вашего аккаунта. <strong>Вы используете этот инструмент на свой страх и риск.</strong>
+            </div>
+        </div>
+        <!-- --- КОНЕЦ НОВОГО БЛОКА --- -->
         
         <div class="instructions" id="dynamic-instructions"></div>
 
