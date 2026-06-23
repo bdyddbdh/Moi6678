@@ -3,13 +3,11 @@
         "platforms": {
             "pc": {
                 "name": "ПК",
-                "steps": [
-                ]
+                "steps": []
             },
             "mobile": {
                 "name": "Мобильные",
-                "steps": [
-                ]
+                "steps": []
             }
         }
     },
