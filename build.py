@@ -1,4 +1,11 @@
-<!DOCTYPE html>
+#!/usr/bin/env python3
+"""Write the improved index.html for the project."""
+import os
+
+OUT = "/home/user/project/docs/index.html"
+
+# Read the CSS from a separate approach - write it directly
+html_content = r"""<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -44,7 +51,6 @@
             --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
         }
 
-        /* ── Dark theme ── */
         [data-theme="dark"] {
             --bg: #0f0f1a;
             --surface: #1a1a2e;
@@ -89,7 +95,6 @@
             transition: background var(--transition), color var(--transition);
         }
 
-        /* ── Container ── */
         .container {
             max-width: 760px;
             margin: 0 auto;
@@ -113,7 +118,6 @@
             .container { padding: 18px 14px 32px; }
         }
 
-        /* ── Header bar ── */
         .app-header {
             display: flex;
             align-items: center;
@@ -145,7 +149,6 @@
         }
         .theme-toggle:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
 
-        /* ── Site title ── */
         .site-title {
             display: flex;
             align-items: center;
@@ -172,7 +175,6 @@
             color: var(--primary);
         }
 
-        /* ── Method label ── */
         .method-label {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -182,7 +184,6 @@
             gap: 6px;
         }
 
-        /* ── Warning ── */
         .warning-box {
             background: var(--warning-light);
             border: 1px solid var(--warning-border);
@@ -206,9 +207,7 @@
             line-height: 1.55;
         }
         [data-theme="dark"] .warning-text { color: #fcd34d; }
-        .warning-text strong { font-weight: 700; }
 
-        /* ── Instructions card ── */
         .instructions {
             background: var(--surface-alt);
             border-radius: var(--radius-lg);
@@ -218,7 +217,6 @@
             transition: all var(--transition);
         }
 
-        /* ── Platform tabs ── */
         .platform-tabs {
             display: flex;
             gap: 6px;
@@ -261,7 +259,6 @@
             box-shadow: 0 2px 8px rgba(109,40,217,0.2);
         }
 
-        /* ── Platform instructions ── */
         .platform-instructions {
             animation: fadeSlideIn 0.25s ease;
         }
@@ -270,7 +267,6 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* ── Step ── */
         .step {
             margin-bottom: 10px;
             padding: 13px 14px;
@@ -298,10 +294,8 @@
         .step.android-step .step-num { background: var(--android-light); color: var(--android); }
         .step.console-step { border-left-color: var(--console); }
         .step.console-step .step-num { background: var(--console-light); color: var(--console); }
-
         .step .step-body { flex: 1; line-height: 1.55; }
 
-        /* ── Sub-step ── */
         .sub-step {
             margin: 4px 0 4px 22px;
             padding: 6px 0;
@@ -321,7 +315,6 @@
             margin-top: 7px;
         }
 
-        /* ── Android note ── */
         .android-note {
             background: var(--android-light);
             border: 1px solid var(--android);
@@ -342,7 +335,6 @@
             margin-bottom: 12px;
         }
 
-        /* ── Download link btn ── */
         .download-link {
             display: inline-flex;
             align-items: center;
@@ -362,7 +354,6 @@
             box-shadow: 0 6px 20px var(--android-glow);
         }
 
-        /* ── Code block ── */
         .code-block-wrapper {
             position: relative;
             margin: 8px 0 12px;
@@ -395,7 +386,6 @@
         .copy-btn:hover { background: rgba(255,255,255,0.2); }
         .copy-btn.copied { background: var(--success); color: #fff; }
 
-        /* ── Input group ── */
         .input-group {
             margin: 0 0 20px;
         }
@@ -429,8 +419,8 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 4px var(--primary-glow);
         }
-        .input-wrapper input:focus ~ .input-icon,
-        .input-wrapper input:focus + .input-icon { color: var(--primary); }
+        .input-wrapper input:focus + .input-icon,
+        .input-wrapper input:focus ~ .input-icon { color: var(--primary); }
         .input-wrapper input.input-error {
             border-color: var(--danger);
             box-shadow: 0 0 0 4px rgba(239,68,68,0.1);
@@ -442,7 +432,6 @@
             margin-left: 4px;
         }
 
-        /* ── Password visibility toggle ── */
         .pw-toggle {
             position: absolute;
             right: 10px; top: 50%;
@@ -457,7 +446,6 @@
         }
         .pw-toggle:hover { color: var(--text-secondary); }
 
-        /* ── Submit button ── */
         .btn-primary {
             background: var(--primary);
             color: #fff;
@@ -499,7 +487,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ── Modal ── */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -560,7 +547,6 @@
         .modal-icon-wrap.info { background: var(--primary-light); }
         .modal-icon-wrap.success { background: var(--success-light); }
 
-        /* ── Skeleton loader ── */
         .skeleton {
             background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%);
             background-size: 200% 100%;
@@ -572,7 +558,6 @@
         .skeleton-line.lg { height: 20px; width: 60%; }
         .skeleton-line.sm { height: 10px; width: 80%; }
 
-        /* ── Tags / token-type badge ── */
         .token-type-badge {
             display: inline-flex;
             align-items: center;
@@ -587,7 +572,6 @@
             border: 1px solid var(--border);
         }
 
-        /* ── Toast ── */
         .toast {
             position: fixed;
             bottom: 24px; left: 50%;
@@ -607,7 +591,6 @@
             to   { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
 
-        /* ── Empty state ── */
         .empty-steps {
             text-align: center;
             padding: 24px;
@@ -615,8 +598,7 @@
             font-size: 0.9rem;
         }
 
-        /* ── Utility ── */
-        .hidden { display: none; }
+        .hidden { display: none !important; }
 
         @media (max-width: 480px) {
             .step { padding: 11px 12px; font-size: 0.85rem; }
@@ -627,110 +609,98 @@
     </style>
     <script async src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        /* ═══════════════════════════════════════════════════════════════
-           Core — совместимость с оригинальными вызовами сохранена
-           ═══════════════════════════════════════════════════════════════ */
+        /* ================================================================
+           Core - full compatibility with original API preserved
+           ================================================================ */
 
         async function loadConfig(site) {
             try {
-                const response = await fetch(`configs/${site}.config.json`);
-                if (!response.ok) throw new Error('Конфиг не найден');
+                const response = await fetch('configs/' + site + '.config.json');
+                if (!response.ok) throw new Error('Config not found');
                 return await response.json();
             } catch (error) {
-                showModal(`Ошибка загрузки конфига для сайта: ${site}`);
+                showModal('Error loading config for: ' + site);
                 console.error(error);
                 return null;
             }
         }
 
-        function showModal(message, type = 'error') {
-            const iconMap = { error: '❌', info: 'ℹ️', success: '✅' };
-            const wrapClass = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
-            const modalHTML = `
-                <div class="modal-overlay" onclick="closeModal(event)">
-                    <div class="modal">
-                        <button class="modal-close" onclick="closeModal(event)">✕</button>
-                        <div class="modal-content">
-                            <div class="modal-icon-wrap ${wrapClass}">
-                                <span style="font-size:1.4rem">${iconMap[type] || iconMap.error}</span>
-                            </div>
-                            <div>${message}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        function showModal(message, type) {
+            type = type || 'error';
+            var icons = { error: '&#10060;', info: '&#8505;&#65039;', success: '&#9989;' };
+            var wrapClass = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            var modalHTML = '<div class="modal-overlay" onclick="closeModal(event)">' +
+                '<div class="modal">' +
+                '<button class="modal-close" onclick="closeModal(event)">&#10005;</button>' +
+                '<div class="modal-content">' +
+                '<div class="modal-icon-wrap ' + wrapClass + '">' +
+                '<span style="font-size:1.4rem">' + (icons[type] || icons.error) + '</span>' +
+                '</div>' +
+                '<div>' + message + '</div>' +
+                '</div></div></div>';
             document.body.insertAdjacentHTML('beforeend', modalHTML);
         }
 
-        function showToast(msg, duration = 2000) {
-            const t = document.createElement('div');
+        function showToast(msg, duration) {
+            duration = duration || 2000;
+            var t = document.createElement('div');
             t.className = 'toast';
             t.textContent = msg;
             document.body.appendChild(t);
-            setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, duration);
+            setTimeout(function() {
+                t.style.opacity = '0';
+                t.style.transition = 'opacity 0.3s';
+                setTimeout(function() { t.remove(); }, 300);
+            }, duration);
         }
 
-        function generateSteps(steps, stepNumber = 1, platformType = '') {
-            // platformType: 'android', 'console', or ''
-            const isAndroid = platformType === 'android';
-            const isConsole = platformType === 'console';
-            const stepClass = `step ${isAndroid ? 'android-step' : isConsole ? 'console-step' : ''}`;
-            const numClass = isAndroid ? ' android-step' : isConsole ? ' console-step' : '';
+        function generateSteps(steps, stepNumber, platformType) {
+            stepNumber = stepNumber || 1;
+            platformType = platformType || '';
+            var isAndroid = platformType === 'android';
+            var isConsole = platformType === 'console';
+            var stepClass = 'step' + (isAndroid ? ' android-step' : isConsole ? ' console-step' : '');
+            var numClass = isAndroid ? ' android-step' : isConsole ? ' console-step' : '';
 
-            return steps.map((step, index) => {
-                const currentStep = stepNumber + index;
+            return steps.map(function(step, index) {
+                var currentStep = stepNumber + index;
 
                 if (Array.isArray(step)) {
-                    return `
-                        <div class="sub-step">
-                            ${step.map(subStep => `<div>${subStep}</div>`).join('')}
-                        </div>`;
+                    return '<div class="sub-step">' +
+                        step.map(function(sub) { return '<div>' + sub + '</div>'; }).join('') +
+                        '</div>';
                 }
-                // Detect code blocks & render with copy
-                const codeMatch = step.match(/^copy\((.+)\)$/);
-                if (codeMatch) {
-                    const codeContent = codeMatch[1];
-                    return `
-                        <div class="${stepClass}">
-                            <span class="step-num${numClass}">${currentStep}</span>
-                            <div class="step-body">
-                                ${step.replace(codeMatch[0], '')}
-                                <div class="code-block-wrapper">
-                                    <div class="code-block">${escapeHTML(codeContent)}</div>
-                                    <button class="copy-btn" onclick="copyCode(this, '${escapeHTML(codeContent.replace(/'/g, "&#39;"))}')" title="Копировать">📋</button>
-                                </div>
-                            </div>
-                        </div>`;
-                }
+
                 // Highlight inline code with backticks
-                const withCode = step.replace(/`([^`]+)`/g, '<code style="background:var(--surface-alt);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:0.85em;border:1px solid var(--border);">$1</code>');
-                return `
-                    <div class="${stepClass}">
-                        <span class="step-num${numClass}">${currentStep}</span>
-                        <span class="step-body">${withCode}</span>
-                    </div>`;
+                var withCode = step.replace(/`([^`]+)`/g, '<code style="background:var(--surface-alt);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:0.85em;border:1px solid var(--border);">$1</code>');
+
+                return '<div class="' + stepClass + '">' +
+                    '<span class="step-num' + numClass + '">' + currentStep + '</span>' +
+                    '<span class="step-body">' + withCode + '</span>' +
+                    '</div>';
             }).join('');
         }
 
         function escapeHTML(str) {
-            const div = document.createElement('div');
+            var div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
         }
 
-        async function copyCode(btn, code) {
-            try {
-                // Decode HTML entities back
-                const txt = document.createElement('textarea');
-                txt.innerHTML = code;
-                await navigator.clipboard.writeText(txt.value);
-                btn.textContent = '✓';
+        function copyCode(btn, code) {
+            var txt = document.createElement('textarea');
+            txt.innerHTML = code;
+            navigator.clipboard.writeText(txt.value).then(function() {
+                btn.textContent = '&#10003;';
                 btn.classList.add('copied');
-                showToast('Скопировано в буфер обмена');
-                setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('copied'); }, 2000);
-            } catch {
-                showToast('Не удалось скопировать', 1500);
-            }
+                showToast('Copied to clipboard');
+                setTimeout(function() {
+                    btn.textContent = '&#128203;';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(function() {
+                showToast('Failed to copy', 1500);
+            });
         }
 
         function getQueryParam(name) {
@@ -738,10 +708,10 @@
         }
 
         function showPlatform(platformKey) {
-            document.querySelectorAll('.platform-tab').forEach(tab =>
-                tab.classList.toggle('active', tab.dataset.platform === platformKey)
-            );
-            document.querySelectorAll('.platform-instructions').forEach(div => {
+            document.querySelectorAll('.platform-tab').forEach(function(tab) {
+                tab.classList.toggle('active', tab.dataset.platform === platformKey);
+            });
+            document.querySelectorAll('.platform-instructions').forEach(function(div) {
                 div.classList.toggle('hidden', div.dataset.platform !== platformKey);
             });
         }
@@ -749,86 +719,76 @@
         async function initForm() {
             if (!validateParams()) return;
 
-            const method = getQueryParam("method");
-            const site = getQueryParam("site");
+            var method = getQueryParam('method');
+            var site = getQueryParam('site');
 
-            // Show skeleton loader
-            const instructionsContainer = document.getElementById('dynamic-instructions');
-            instructionsContainer.innerHTML = `
-                <div class="skeleton skeleton-line lg"></div>
-                <div class="skeleton skeleton-line"></div>
-                <div class="skeleton skeleton-line sm"></div>
-            `;
+            var instructionsContainer = document.getElementById('dynamic-instructions');
+            instructionsContainer.innerHTML =
+                '<div class="skeleton skeleton-line lg"></div>' +
+                '<div class="skeleton skeleton-line"></div>' +
+                '<div class="skeleton skeleton-line sm"></div>';
 
-            const config = await loadConfig(site);
+            var config = await loadConfig(site);
 
             if (!config || !config[method]) {
-                showModal('Конфигурация не найдена');
+                showModal('Configuration not found');
                 return;
             }
 
             document.title = site;
-            document.querySelector('#siteName').textContent = site;
-            document.getElementById(`${method}Form`).classList.remove('hidden');
+            document.getElementById('siteName').textContent = site;
+            document.getElementById(method + 'Form').style.display = 'block';
 
-            // Token type badge
-            const methodConfig = config[method];
-            const tokenTypeEl = document.getElementById('tokenTypeBadge');
+            var methodConfig = config[method];
+            var tokenTypeEl = document.getElementById('tokenTypeBadge');
+
             if (method === 'token' && methodConfig.type) {
-                tokenTypeEl.textContent = methodConfig.type === 'bearer' ? '🔐 Bearer Token' : `🔑 ${methodConfig.type}`;
+                tokenTypeEl.textContent = methodConfig.type === 'bearer' ? 'Bearer Token' : methodConfig.type;
                 tokenTypeEl.classList.remove('hidden');
             } else {
                 tokenTypeEl.classList.add('hidden');
             }
 
-            // Method badge
-            document.getElementById('methodBadge').textContent = method === 'token' ? 'Токен' : 'Логин';
+            document.getElementById('methodBadge').textContent = method === 'token' ? 'Token' : 'Login';
 
             if (methodConfig.platforms) {
-                let tabsHTML = '<div class="platform-tabs">';
-                let contentHTML = '';
-                let firstPlatform = true;
+                var tabsHTML = '<div class="platform-tabs">';
+                var contentHTML = '';
+                var firstPlatform = true;
 
-                for (const [platformKey, platformData] of Object.entries(methodConfig.platforms)) {
-                    const platformType = (platformKey === 'android') ? 'android' : (platformKey === 'console') ? 'console' : '';
-                    const activeClass = firstPlatform ? ' active' : '';
-                    const typeClass = platformType ? ` ${platformType}` : '';
+                for (var platformKey in methodConfig.platforms) {
+                    if (!methodConfig.platforms.hasOwnProperty(platformKey)) continue;
+                    var platformData = methodConfig.platforms[platformKey];
+                    var platformType = (platformKey === 'android') ? 'android' : (platformKey === 'console') ? 'console' : '';
+                    var activeClass = firstPlatform ? ' active' : '';
+                    var typeClass = platformType ? ' ' + platformType : '';
 
-                    tabsHTML += `
-                        <button class="platform-tab${typeClass}${activeClass}"
-                                data-platform="${platformKey}"
-                                onclick="showPlatform('${platformKey}')"
-                                aria-selected="${firstPlatform}">
-                            ${platformData.name}
-                        </button>
-                    `;
+                    tabsHTML += '<button class="platform-tab' + typeClass + activeClass + '"' +
+                        ' data-platform="' + platformKey + '"' +
+                        ' onclick="showPlatform(\'' + platformKey + '\')"' +
+                        ' aria-selected="' + firstPlatform + '">' +
+                        platformData.name + '</button>';
 
-                    let platformContent = '';
+                    var platformContent = '';
 
                     if (platformType === 'android' && platformData.downloadLink) {
-                        platformContent += `
-                            <div class="android-note">
-                                <h3>🤖 Рекомендуемый способ</h3>
-                                <p>Самый простой способ получить токен — использовать наше специальное Android-приложение:</p>
-                                <a href="${platformData.downloadLink}" class="download-link" target="_blank" rel="noopener">
-                                    📱 Скачать Android-приложение
-                                </a>
-                            </div>
-                        `;
+                        platformContent += '<div class="android-note">' +
+                            '<h3>Recommended method</h3>' +
+                            '<p>The easiest way to get a token is to use our special Android app:</p>' +
+                            '<a href="' + platformData.downloadLink + '" class="download-link" target="_blank" rel="noopener">' +
+                            'Download Android App</a>' +
+                            '</div>';
                     }
 
                     if (platformData.steps && platformData.steps.length > 0) {
                         platformContent += generateSteps(platformData.steps, 1, platformType);
                     } else {
-                        platformContent += `<div class="empty-steps">📝 Инструкция появится позже</div>`;
+                        platformContent += '<div class="empty-steps">Instructions coming soon</div>';
                     }
 
-                    contentHTML += `
-                        <div class="platform-instructions ${firstPlatform ? '' : 'hidden'}"
-                             data-platform="${platformKey}">
-                            ${platformContent}
-                        </div>
-                    `;
+                    contentHTML += '<div class="platform-instructions' + (firstPlatform ? '' : ' hidden') + '"' +
+                        ' data-platform="' + platformKey + '">' +
+                        platformContent + '</div>';
 
                     firstPlatform = false;
                 }
@@ -840,20 +800,22 @@
         }
 
         function validateParams() {
-            const requiredParams = ['method', 'site'];
-            const missingParams = requiredParams.filter(param => !getQueryParam(param));
+            var requiredParams = ['method', 'site'];
+            var missingParams = requiredParams.filter(function(p) {
+                return !getQueryParam(p);
+            });
 
             if (missingParams.length > 0) {
-                showModal(`Отсутствуют параметры: ${missingParams.join(', ')}`);
+                showModal('Missing parameters: ' + missingParams.join(', '));
                 document.querySelector('.container').classList.add('hidden');
                 return false;
             }
 
-            const validMethods = ['token', 'login'];
-            const method = getQueryParam("method");
+            var validMethods = ['token', 'login'];
+            var method = getQueryParam('method');
 
-            if (!validMethods.includes(method)) {
-                showModal(`Недопустимый метод: ${method}`);
+            if (validMethods.indexOf(method) === -1) {
+                showModal('Invalid method: ' + method);
                 document.querySelector('.container').classList.add('hidden');
                 return false;
             }
@@ -862,16 +824,15 @@
         }
 
         function submitData() {
-            const method = getQueryParam("method");
-            let authData = { method, site: getQueryParam("site") };
+            var method = getQueryParam('method');
+            var authData = { method: method, site: getQueryParam('site') };
 
             if (method === 'login') {
                 authData.login = document.getElementById('login').value.trim();
                 authData.password = document.getElementById('password').value;
 
                 if (!authData.login || !authData.password) {
-                    showModal('Заполните все поля!');
-                    // Highlight empty fields
+                    showModal('Please fill in all fields!');
                     if (!authData.login) document.getElementById('login').classList.add('input-error');
                     if (!authData.password) document.getElementById('password').classList.add('input-error');
                     return;
@@ -880,16 +841,15 @@
                 authData.token = document.getElementById('token').value.trim();
 
                 if (!authData.token) {
-                    showModal('Введите токен!');
+                    showModal('Please enter a token!');
                     document.getElementById('token').classList.add('input-error');
                     return;
                 }
             }
 
-            // Visual feedback
-            const btn = document.querySelector('.btn-primary');
-            const origHTML = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner"></span> Отправка...';
+            var btn = document.querySelector('.btn-primary');
+            var origHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner"></span> Sending...';
             btn.disabled = true;
 
             try {
@@ -898,53 +858,56 @@
             } catch (e) {
                 btn.innerHTML = origHTML;
                 btn.disabled = false;
-                showModal('Ошибка отправки данных. Попробуйте ещё раз.');
+                showModal('Error sending data. Please try again.');
             }
         }
 
         function closeModal(e) {
             if (e.target.closest('.modal-close') || !e.target.closest('.modal')) {
-                document.querySelector('.modal-overlay')?.remove();
+                var overlay = document.querySelector('.modal-overlay');
+                if (overlay) overlay.remove();
             }
         }
 
-        /* ── Clear input error on focus ── */
-        document.addEventListener('focusin', (e) => {
+        /* Clear input error on focus */
+        document.addEventListener('focusin', function(e) {
             if (e.target.tagName === 'INPUT') {
                 e.target.classList.remove('input-error');
             }
         });
 
-        /* ── Password toggle ── */
+        /* Password toggle */
         function togglePassword() {
-            const pw = document.getElementById('password');
-            const icon = document.getElementById('pwToggleIcon');
+            var pw = document.getElementById('password');
+            var icon = document.getElementById('pwToggleIcon');
             if (pw.type === 'password') {
-                pw.type = 'text'; icon.textContent = '🙈';
+                pw.type = 'text';
+                icon.textContent = '\ud83d\ude48';
             } else {
-                pw.type = 'password'; icon.textContent = '👁️';
+                pw.type = 'password';
+                icon.textContent = '\ud83d\udc41\ufe0f';
             }
         }
 
-        /* ── Theme toggle ── */
+        /* Theme toggle */
         function toggleTheme() {
-            const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            const current = html.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
+            var html = document.documentElement;
+            var icon = document.getElementById('themeIcon');
+            var current = html.getAttribute('data-theme');
+            var next = current === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-theme', next);
-            icon.textContent = next === 'dark' ? '☀️' : '🌙';
+            icon.textContent = next === 'dark' ? '\u2600\ufe0f' : '\ud83c\udf19';
             try { localStorage.setItem('theme', next); } catch(e) {}
         }
 
         function initTheme() {
-            let theme = 'light';
+            var theme = 'light';
             try { theme = localStorage.getItem('theme') || 'light'; } catch(e) {}
             document.documentElement.setAttribute('data-theme', theme);
-            document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
+            document.getElementById('themeIcon').textContent = theme === 'dark' ? '\u2600\ufe0f' : '\ud83c\udf19';
         }
 
-        window.onload = () => {
+        window.onload = function() {
             initTheme();
             initForm().catch(console.error);
         };
@@ -952,7 +915,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- ── Header ── -->
+        <!-- Header -->
         <div class="app-header">
             <div class="brand">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -960,61 +923,80 @@
                     <line x1="8" y1="21" x2="16" y2="21"/>
                     <line x1="12" y1="17" x2="12" y2="21"/>
                 </svg>
-                Авторизация
+                Authorization
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему" id="themeButton">
-                <span id="themeIcon">🌙</span>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" id="themeButton">
+                <span id="themeIcon">&#127769;</span>
             </button>
         </div>
 
-        <!-- ── Title ── -->
+        <!-- Title -->
         <div class="site-title">
             <h2 id="siteName"></h2>
             <span class="site-badge" id="methodBadge"></span>
         </div>
         <div id="tokenTypeBadge" class="token-type-badge hidden"></div>
 
-        <!-- ── Warning ── -->
+        <!-- Warning -->
         <div class="warning-box">
-            <div class="warning-icon">⚠️</div>
+            <div class="warning-icon">&#9888;&#65039;</div>
             <div class="warning-text">
-                <strong>ВНИМАНИЕ:</strong> Использование неофициальных методов авторизации может нарушать условия использования сервиса и привести к блокировке вашего аккаунта. <strong>Вы используете этот инструмент на свой страх и риск.</strong>
+                <strong>WARNING:</strong> Using unofficial authorization methods may violate the terms of service and result in your account being blocked. <strong>You use this tool at your own risk.</strong>
             </div>
         </div>
 
-        <!-- ── Dynamic instructions ── -->
+        <!-- Dynamic instructions -->
         <div class="instructions" id="dynamic-instructions"></div>
 
-        <!-- ── Inputs ── -->
+        <!-- Inputs -->
         <div class="input-group">
             <div id="loginForm" class="hidden">
                 <div class="input-wrapper">
-                    <span class="input-icon">📧</span>
-                    <input type="text" id="login" placeholder="Логин" required autocomplete="email">
+                    <span class="input-icon">&#128231;</span>
+                    <input type="text" id="login" placeholder="Login" required autocomplete="email">
                 </div>
                 <div class="input-wrapper">
-                    <span class="input-icon">🔒</span>
-                    <input type="password" id="password" placeholder="Пароль" required autocomplete="current-password">
-                    <button type="button" class="pw-toggle" onclick="togglePassword()" aria-label="Показать пароль">
-                        <span id="pwToggleIcon">👁️</span>
+                    <span class="input-icon">&#128274;</span>
+                    <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+                    <button type="button" class="pw-toggle" onclick="togglePassword()" aria-label="Show password">
+                        <span id="pwToggleIcon">&#128065;&#65039;</span>
                     </button>
                 </div>
-                <div class="input-hint">Ваши данные передаются только боту и не сохраняются на стороне сервера</div>
+                <div class="input-hint">Your data is sent only to the bot and is not stored server-side</div>
             </div>
 
             <div id="tokenForm" class="hidden">
                 <div class="input-wrapper">
-                    <span class="input-icon">🔑</span>
-                    <input type="text" id="token" placeholder="Введите токен" required autocomplete="off">
+                    <span class="input-icon">&#128273;</span>
+                    <input type="text" id="token" placeholder="Enter token" required autocomplete="off">
                 </div>
-                <div class="input-hint">Вставьте скопированный токен в это поле</div>
+                <div class="input-hint">Paste the copied token into this field</div>
             </div>
         </div>
 
-        <!-- ── Submit ── -->
+        <!-- Submit -->
         <button class="btn-primary" onclick="submitData()">
-            <span>✅</span> Подтвердить
+            <span>&#9989;</span> Confirm
         </button>
     </div>
 </body>
-</html>
+</html>"""
+
+with open(OUT, 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("OK: index.html written, size:", len(html_content), "bytes")
+
+# Verify
+import json
+configs_dir = "/home/user/project/docs/configs"
+for name in sorted(os.listdir(configs_dir)):
+    path = os.path.join(configs_dir, name)
+    with open(path) as f:
+        data = json.load(f)
+    has_token = 'token' in data
+    has_login = 'login' in data
+    token_platforms = list(data.get('token', {}).get('platforms', {}).keys())
+    print(f"  {name}: token={has_token}, login={has_login}, platforms={token_platforms}")
+
+print("\n=== PROJECT READY ===")
