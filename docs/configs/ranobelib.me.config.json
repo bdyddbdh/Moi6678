@@ -1,7 +1,3 @@
-надо переписать шаблон под сайт [ranobelib.me получение токина](http://ranobelib.me) **authorization**
-
-Bearer
-
 {
 
     "token": {
