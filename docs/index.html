@@ -1,1020 +1,230 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Авторизация</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1a1a2e">
-    <style>
-        :root {
-            --bg: #f0f2f5;
-            --surface: #ffffff;
-            --surface-alt: #f8f9fb;
-            --text: #1a1a2e;
-            --text-secondary: #5a5d6e;
-            --text-muted: #8b8fa3;
-            --border: #e2e5ec;
-            --border-light: #eef0f4;
-            --primary: #4f6ef7;
-            --primary-hover: #3d5bd9;
-            --primary-light: #eef1fe;
-            --primary-glow: rgba(79,110,247,0.15);
-            --success: #22c55e;
-            --success-light: #eafaf1;
-            --warning: #f59e0b;
-            --warning-light: #fffbe6;
-            --warning-border: #fbbf24;
-            --danger: #ef4444;
-            --danger-light: #fef2f2;
-            --android: #689f38;
-            --android-light: #edf7e7;
-            --android-glow: rgba(104,159,56,0.15);
-            --console: #6d28d9;
-            --console-light: #f3eeff;
-            --radius-sm: 8px;
-            --radius: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-            --shadow: 0 4px 12px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.04);
-            --shadow-lg: 0 12px 32px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
-            --shadow-xl: 0 20px 48px rgba(0,0,0,0.12);
-            --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
-            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
-            --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
-        }
-
-        /* ── Dark theme ── */
-        [data-theme="dark"] {
-            --bg: #0f0f1a;
-            --surface: #1a1a2e;
-            --surface-alt: #222240;
-            --text: #e4e6f0;
-            --text-secondary: #b0b3c5;
-            --text-muted: #6e7191;
-            --border: #2e2e4a;
-            --border-light: #252540;
-            --primary: #6d8aff;
-            --primary-hover: #5a74e0;
-            --primary-light: #1e2240;
-            --primary-glow: rgba(109,138,255,0.12);
-            --success: #34d399;
-            --success-light: #0f2d24;
-            --warning: #fbbf24;
-            --warning-light: #2d1f0a;
-            --warning-border: #d97706;
-            --danger: #f87171;
-            --danger-light: #2d0f0f;
-            --android: #8bc34a;
-            --android-light: #1a2e0f;
-            --android-glow: rgba(139,195,74,0.12);
-            --console: #a78bfa;
-            --console-light: #1e1540;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-            --shadow: 0 4px 12px rgba(0,0,0,0.3);
-            --shadow-lg: 0 12px 32px rgba(0,0,0,0.4);
-            --shadow-xl: 0 20px 48px rgba(0,0,0,0.5);
-        }
-
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: var(--font);
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
-            transition: background var(--transition), color var(--transition);
-        }
-
-        /* ── Container ── */
-        .container {
-            max-width: 760px;
-            margin: 0 auto;
-            padding: 24px 20px 40px;
-            background: var(--surface);
-            min-height: 100vh;
-            box-sizing: border-box;
-            transition: background var(--transition);
-        }
-        @media (min-width: 768px) {
-            .container {
-                padding: 36px 40px 48px;
-                margin: 28px auto 40px;
-                min-height: auto;
-                border-radius: var(--radius-xl);
-                box-shadow: var(--shadow-lg);
-                border: 1px solid var(--border-light);
-            }
-        }
-        @media (max-width: 480px) {
-            .container { padding: 18px 14px 32px; }
-        }
-
-        /* ── Header bar ── */
-        .app-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .app-header .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.15rem;
-            color: var(--text);
-            letter-spacing: -0.01em;
-        }
-        .app-header .brand svg { flex-shrink: 0; }
-        .theme-toggle {
-            width: 40px; height: 40px;
-            border-radius: 50%;
-            border: 1px solid var(--border);
-            background: var(--surface-alt);
-            cursor: pointer;
-            font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center;
-            transition: all var(--transition);
-            color: var(--text-secondary);
-        }
-        .theme-toggle:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
-
-        /* ── Site title ── */
-        .site-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 6px;
-        }
-        .site-title h2 {
-            font-size: 1.55rem;
-            font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.02em;
-        }
-        .site-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            padding: 4px 10px;
-            border-radius: 100px;
-            background: var(--primary-light);
-            color: var(--primary);
-        }
-
-        /* ── Method label ── */
-        .method-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* ── Warning ── */
-        .warning-box {
-            background: var(--warning-light);
-            border: 1px solid var(--warning-border);
-            border-left: 4px solid var(--warning);
-            padding: 14px 16px;
-            margin: 0 0 24px;
-            border-radius: var(--radius);
-            display: flex;
-            align-items: flex-start;
-            gap: 11px;
-            transition: all var(--transition);
-        }
-        .warning-icon {
-            font-size: 20px;
-            line-height: 1.3;
-            flex-shrink: 0;
-        }
-        .warning-text {
-            font-size: 0.85rem;
-            color: #92400e;
-            line-height: 1.55;
-        }
-        [data-theme="dark"] .warning-text { color: #fcd34d; }
-        .warning-text strong { font-weight: 700; }
-
-        /* ── Instructions card ── */
-        .instructions {
-            background: var(--surface-alt);
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            margin: 0 0 20px;
-            border: 1px solid var(--border-light);
-            transition: all var(--transition);
-        }
-
-        /* ── Platform tabs ── */
-        .platform-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            padding: 4px;
-            background: var(--border-light);
-            border-radius: var(--radius);
-        }
-        .platform-tab {
-            padding: 9px 16px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            background: transparent;
-            transition: all var(--transition);
-            font-size: 0.84rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            flex-shrink: 0;
-            border: none;
-            white-space: nowrap;
-            position: relative;
-        }
-        .platform-tab:hover { color: var(--text); background: var(--surface); }
-        .platform-tab.active {
-            background: var(--surface);
-            color: var(--primary);
-            box-shadow: var(--shadow-sm);
-        }
-        .platform-tab.android { color: var(--android); }
-        .platform-tab.android.active {
-            background: var(--android);
-            color: #fff;
-            box-shadow: 0 2px 8px var(--android-glow);
-        }
-        .platform-tab.console { color: var(--console); }
-        .platform-tab.console.active {
-            background: var(--console);
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(109,40,217,0.2);
-        }
-
-        /* ── Platform instructions ── */
-        .platform-instructions {
-            animation: fadeSlideIn 0.25s ease;
-        }
-        @keyframes fadeSlideIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── Step ── */
-        .step {
-            margin-bottom: 10px;
-            padding: 13px 14px;
-            background: var(--surface);
-            border-left: 4px solid var(--primary);
-            border-radius: var(--radius-sm);
-            font-size: 0.92rem;
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition);
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-        .step .step-num {
-            flex-shrink: 0;
-            width: 26px; height: 26px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            font-weight: 700;
-            font-size: 0.78rem;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .step.android-step { border-left-color: var(--android); }
-        .step.android-step .step-num { background: var(--android-light); color: var(--android); }
-        .step.console-step { border-left-color: var(--console); }
-        .step.console-step .step-num { background: var(--console-light); color: var(--console); }
-
-        .step .step-body { flex: 1; line-height: 1.55; }
-
-        /* ── Sub-step ── */
-        .sub-step {
-            margin: 4px 0 4px 22px;
-            padding: 6px 0;
-            color: var(--text-secondary);
-            font-size: 0.87rem;
-            position: relative;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-        .sub-step::before {
-            content: '';
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: var(--primary);
-            flex-shrink: 0;
-            margin-top: 7px;
-        }
-
-        /* ── Android note ── */
-        .android-note {
-            background: var(--android-light);
-            border: 1px solid var(--android);
-            padding: 16px 18px;
-            border-radius: var(--radius);
-            margin: 0 0 16px;
-            transition: all var(--transition);
-        }
-        .android-note h3 {
-            margin: 0 0 8px;
-            color: var(--android);
-            font-size: 1rem;
-            font-weight: 700;
-        }
-        .android-note p {
-            font-size: 0.88rem;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-        }
-
-        /* ── Download link btn ── */
-        .download-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--android);
-            color: #fff;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 100px;
-            font-weight: 700;
-            font-size: 0.88rem;
-            transition: all var(--transition);
-            box-shadow: 0 2px 8px var(--android-glow);
-        }
-        .download-link:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px var(--android-glow);
-        }
-
-        /* ── Code block ── */
-        .code-block-wrapper {
-            position: relative;
-            margin: 8px 0 12px;
-        }
-        .code-block {
-            background: #1e1e2e;
-            color: #cdd6f4;
-            padding: 14px 44px 14px 16px;
-            border-radius: var(--radius-sm);
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            overflow-x: auto;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        .copy-btn {
-            position: absolute;
-            top: 8px; right: 8px;
-            width: 32px; height: 32px;
-            border-radius: 6px;
-            border: none;
-            background: rgba(255,255,255,0.1);
-            color: #cdd6f4;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex; align-items: center; justify-content: center;
-            transition: all var(--transition);
-        }
-        .copy-btn:hover { background: rgba(255,255,255,0.2); }
-        .copy-btn.copied { background: var(--success); color: #fff; }
-
-        /* ── Input group ── */
-        .input-group {
-            margin: 0 0 20px;
-        }
-        .input-wrapper {
-            position: relative;
-            margin-bottom: 10px;
-        }
-        .input-wrapper .input-icon {
-            position: absolute;
-            left: 14px; top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            pointer-events: none;
-            transition: color var(--transition);
-        }
-        .input-wrapper input {
-            width: 100%;
-            padding: 14px 14px 14px 44px;
-            border: 2px solid var(--border);
-            border-radius: var(--radius);
-            font-size: 0.95rem;
-            font-family: var(--font);
-            background: var(--surface);
-            color: var(--text);
-            transition: all var(--transition);
-            box-sizing: border-box;
-            outline: none;
-        }
-        .input-wrapper input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--primary-glow);
-        }
-        .input-wrapper input:focus ~ .input-icon,
-        .input-wrapper input:focus + .input-icon { color: var(--primary); }
-        .input-wrapper input.input-error {
-            border-color: var(--danger);
-            box-shadow: 0 0 0 4px rgba(239,68,68,0.1);
-        }
-        .input-hint {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: -4px;
-            margin-left: 4px;
-        }
-
-        /* ── Password visibility toggle ── */
-        .pw-toggle {
-            position: absolute;
-            right: 10px; top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 1.1rem;
-            cursor: pointer;
-            color: var(--text-muted);
-            padding: 8px;
-            line-height: 1;
-        }
-        .pw-toggle:hover { color: var(--text-secondary); }
-
-        /* ── Submit button ── */
-        .btn-primary {
-            background: var(--primary);
-            color: #fff;
-            padding: 15px 24px;
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            width: 100%;
-            font-size: 1rem;
-            font-weight: 700;
-            transition: all var(--transition);
-            font-family: var(--font);
-            touch-action: manipulation;
-            letter-spacing: 0.01em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 16px var(--primary-glow);
-        }
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 8px 24px var(--primary-glow);
-        }
-        .btn-primary:active { transform: translateY(0); }
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        .btn-primary .spinner {
-            width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ── Modal ── */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            animation: overlayShow 0.2s ease;
-        }
-        @keyframes overlayShow { from { opacity: 0; } to { opacity: 1; } }
-        .modal {
-            background: var(--surface);
-            padding: 28px 26px;
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 420px;
-            position: relative;
-            animation: modalShow 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
-            box-shadow: var(--shadow-xl);
-            border: 1px solid var(--border-light);
-        }
-        @keyframes modalShow {
-            from { transform: translateY(20px) scale(0.96); opacity: 0; }
-            to   { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        .modal-close {
-            position: absolute;
-            top: 12px; right: 14px;
-            background: var(--surface-alt);
-            border: none;
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            font-size: 1.1rem;
-            cursor: pointer;
-            color: var(--text-secondary);
-            display: flex; align-items: center; justify-content: center;
-            transition: all var(--transition);
-        }
-        .modal-close:hover { background: var(--danger-light); color: var(--danger); }
-        .modal-content {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            font-size: 0.95rem;
-            line-height: 1.55;
-        }
-        .modal-icon-wrap {
-            flex-shrink: 0;
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .modal-icon-wrap.error { background: var(--danger-light); }
-        .modal-icon-wrap.info { background: var(--primary-light); }
-        .modal-icon-wrap.success { background: var(--success-light); }
-
-        /* ── Skeleton loader ── */
-        .skeleton {
-            background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s ease-in-out infinite;
-            border-radius: 4px;
-        }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        .skeleton-line { height: 14px; margin-bottom: 10px; }
-        .skeleton-line.lg { height: 20px; width: 60%; }
-        .skeleton-line.sm { height: 10px; width: 80%; }
-
-        /* ── Tags / token-type badge ── */
-        .token-type-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 100px;
-            background: var(--surface-alt);
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            border: 1px solid var(--border);
-        }
-
-        /* ── Toast ── */
-        .toast {
-            position: fixed;
-            bottom: 24px; left: 50%;
-            transform: translateX(-50%);
-            background: #1e1e2e;
-            color: #fff;
-            padding: 12px 22px;
-            border-radius: 100px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            z-index: 2000;
-            box-shadow: var(--shadow-xl);
-            animation: toastIn 0.3s ease;
-        }
-        @keyframes toastIn {
-            from { transform: translateX(-50%) translateY(20px); opacity: 0; }
-            to   { transform: translateX(-50%) translateY(0); opacity: 1; }
-        }
-
-        /* ── Empty state ── */
-        .empty-steps {
-            text-align: center;
-            padding: 24px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* ── Utility ── */
-        .hidden { display: none; }
-
-        @media (max-width: 480px) {
-            .step { padding: 11px 12px; font-size: 0.85rem; }
-            .platform-tab { padding: 7px 12px; font-size: 0.78rem; }
-            .btn-primary { padding: 14px; font-size: 0.95rem; }
-            .site-title h2 { font-size: 1.3rem; }
-        }
-    </style>
-    <script async src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-        /* ═══════════════════════════════════════════════════════════════
-           Core — совместимость с оригинальными вызовами сохранена
-           ═══════════════════════════════════════════════════════════════ */
-
-        async function loadConfig(site) {
-            try {
-                const response = await fetch(`configs/${site}.config.json`);
-                if (!response.ok) throw new Error('Конфиг не найден');
-                return await response.json();
-            } catch (error) {
-                showModal(`Ошибка загрузки конфига для сайта: ${site}`);
-                console.error(error);
-                return null;
-            }
-        }
-
-        function showModal(message, type = 'error') {
-            const iconMap = { error: '❌', info: 'ℹ️', success: '✅' };
-            const wrapClass = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
-            const modalHTML = `
-                <div class="modal-overlay" onclick="closeModal(event)">
-                    <div class="modal">
-                        <button class="modal-close" onclick="closeModal(event)">✕</button>
-                        <div class="modal-content">
-                            <div class="modal-icon-wrap ${wrapClass}">
-                                <span style="font-size:1.4rem">${iconMap[type] || iconMap.error}</span>
-                            </div>
-                            <div>${message}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-        }
-
-        function showToast(msg, duration = 2000) {
-            const t = document.createElement('div');
-            t.className = 'toast';
-            t.textContent = msg;
-            document.body.appendChild(t);
-            setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, duration);
-        }
-
-        function generateSteps(steps, stepNumber = 1, platformType = '') {
-            // platformType: 'android', 'console', or ''
-            const isAndroid = platformType === 'android';
-            const isConsole = platformType === 'console';
-            const stepClass = `step ${isAndroid ? 'android-step' : isConsole ? 'console-step' : ''}`;
-            const numClass = isAndroid ? ' android-step' : isConsole ? ' console-step' : '';
-
-            return steps.map((step, index) => {
-                const currentStep = stepNumber + index;
-
-                if (Array.isArray(step)) {
-                    return `
-                        <div class="sub-step">
-                            ${step.map(subStep => `<div>${subStep}</div>`).join('')}
-                        </div>`;
-                }
-                // Detect code blocks & render with copy
-                const codeMatch = step.match(/^copy\((.+)\)$/);
-                if (codeMatch) {
-                    const codeContent = codeMatch[1];
-                    return `
-                        <div class="${stepClass}">
-                            <span class="step-num${numClass}">${currentStep}</span>
-                            <div class="step-body">
-                                ${step.replace(codeMatch[0], '')}
-                                <div class="code-block-wrapper">
-                                    <div class="code-block">${escapeHTML(codeContent)}</div>
-                                    <button class="copy-btn" onclick="copyCode(this, '${escapeHTML(codeContent.replace(/'/g, "&#39;"))}')" title="Копировать">📋</button>
-                                </div>
-                            </div>
-                        </div>`;
-                }
-                // Highlight inline code with backticks
-                const withCode = step.replace(/`([^`]+)`/g, '<code style="background:var(--surface-alt);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:0.85em;border:1px solid var(--border);">$1</code>');
-                return `
-                    <div class="${stepClass}">
-                        <span class="step-num${numClass}">${currentStep}</span>
-                        <span class="step-body">${withCode}</span>
-                    </div>`;
-            }).join('');
-        }
-
-        function escapeHTML(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-
-        async function copyCode(btn, code) {
-            try {
-                // Decode HTML entities back
-                const txt = document.createElement('textarea');
-                txt.innerHTML = code;
-                await navigator.clipboard.writeText(txt.value);
-                btn.textContent = '✓';
-                btn.classList.add('copied');
-                showToast('Скопировано в буфер обмена');
-                setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('copied'); }, 2000);
-            } catch {
-                showToast('Не удалось скопировать', 1500);
-            }
-        }
-
-        function getQueryParam(name) {
-            return new URLSearchParams(window.location.search).get(name);
-        }
-
-        function showPlatform(platformKey) {
-            document.querySelectorAll('.platform-tab').forEach(tab =>
-                tab.classList.toggle('active', tab.dataset.platform === platformKey)
-            );
-            document.querySelectorAll('.platform-instructions').forEach(div => {
-                div.classList.toggle('hidden', div.dataset.platform !== platformKey);
-            });
-        }
-
-        async function initForm() {
-            if (!validateParams()) return;
-
-            const method = getQueryParam("method");
-            const site = getQueryParam("site");
-
-            // Show skeleton loader
-            const instructionsContainer = document.getElementById('dynamic-instructions');
-            instructionsContainer.innerHTML = `
-                <div class="skeleton skeleton-line lg"></div>
-                <div class="skeleton skeleton-line"></div>
-                <div class="skeleton skeleton-line sm"></div>
-            `;
-
-            const config = await loadConfig(site);
-
-            if (!config || !config[method]) {
-                showModal('Конфигурация не найдена');
-                return;
-            }
-
-            document.title = site;
-            document.querySelector('#siteName').textContent = site;
-            document.getElementById(`${method}Form`).classList.remove('hidden');
-
-            // Token type badge
-            const methodConfig = config[method];
-            const tokenTypeEl = document.getElementById('tokenTypeBadge');
-            if (method === 'token' && methodConfig.type) {
-                tokenTypeEl.textContent = methodConfig.type === 'bearer' ? '🔐 Bearer Token' : `🔑 ${methodConfig.type}`;
-                tokenTypeEl.classList.remove('hidden');
-            } else {
-                tokenTypeEl.classList.add('hidden');
-            }
-
-            // Method badge
-            document.getElementById('methodBadge').textContent = method === 'token' ? 'Токен' : 'Логин';
-
-            if (methodConfig.platforms) {
-                let tabsHTML = '<div class="platform-tabs">';
-                let contentHTML = '';
-                let firstPlatform = true;
-
-                for (const [platformKey, platformData] of Object.entries(methodConfig.platforms)) {
-                    const platformType = (platformKey === 'android') ? 'android' : (platformKey === 'console') ? 'console' : '';
-                    const activeClass = firstPlatform ? ' active' : '';
-                    const typeClass = platformType ? ` ${platformType}` : '';
-
-                    tabsHTML += `
-                        <button class="platform-tab${typeClass}${activeClass}"
-                                data-platform="${platformKey}"
-                                onclick="showPlatform('${platformKey}')"
-                                aria-selected="${firstPlatform}">
-                            ${platformData.name}
-                        </button>
-                    `;
-
-                    let platformContent = '';
-
-                    if (platformType === 'android' && platformData.downloadLink) {
-                        platformContent += `
-                            <div class="android-note">
-                                <h3>🤖 Рекомендуемый способ</h3>
-                                <p>Самый простой способ получить токен — использовать наше специальное Android-приложение:</p>
-                                <a href="${platformData.downloadLink}" class="download-link" target="_blank" rel="noopener">
-                                    📱 Скачать Android-приложение
-                                </a>
-                            </div>
-                        `;
-                    }
-
-                    if (platformData.steps && platformData.steps.length > 0) {
-                        platformContent += generateSteps(platformData.steps, 1, platformType);
-                    } else {
-                        platformContent += `<div class="empty-steps">📝 Инструкция появится позже</div>`;
-                    }
-
-                    contentHTML += `
-                        <div class="platform-instructions ${firstPlatform ? '' : 'hidden'}"
-                             data-platform="${platformKey}">
-                            ${platformContent}
-                        </div>
-                    `;
-
-                    firstPlatform = false;
-                }
-                tabsHTML += '</div>';
-                instructionsContainer.innerHTML = tabsHTML + contentHTML;
-            } else {
-                instructionsContainer.innerHTML = generateSteps(methodConfig.steps);
-            }
-        }
-
-        function validateParams() {
-            const requiredParams = ['method', 'site'];
-            const missingParams = requiredParams.filter(param => !getQueryParam(param));
-
-            if (missingParams.length > 0) {
-                showModal(`Отсутствуют параметры: ${missingParams.join(', ')}`);
-                document.querySelector('.container').classList.add('hidden');
-                return false;
-            }
-
-            const validMethods = ['token', 'login'];
-            const method = getQueryParam("method");
-
-            if (!validMethods.includes(method)) {
-                showModal(`Недопустимый метод: ${method}`);
-                document.querySelector('.container').classList.add('hidden');
-                return false;
-            }
-
-            return true;
-        }
-
-        function submitData() {
-            const method = getQueryParam("method");
-            let authData = { method, site: getQueryParam("site") };
-
-            if (method === 'login') {
-                authData.login = document.getElementById('login').value.trim();
-                authData.password = document.getElementById('password').value;
-
-                if (!authData.login || !authData.password) {
-                    showModal('Заполните все поля!');
-                    // Highlight empty fields
-                    if (!authData.login) document.getElementById('login').classList.add('input-error');
-                    if (!authData.password) document.getElementById('password').classList.add('input-error');
-                    return;
-                }
-            } else {
-                authData.token = document.getElementById('token').value.trim();
-
-                if (!authData.token) {
-                    showModal('Введите токен!');
-                    document.getElementById('token').classList.add('input-error');
-                    return;
-                }
-            }
-
-            // Visual feedback
-            const btn = document.querySelector('.btn-primary');
-            const origHTML = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner"></span> Отправка...';
-            btn.disabled = true;
-
-            try {
-                Telegram.WebApp.sendData(JSON.stringify(authData));
-                Telegram.WebApp.close();
-            } catch (e) {
-                btn.innerHTML = origHTML;
-                btn.disabled = false;
-                showModal('Ошибка отправки данных. Попробуйте ещё раз.');
-            }
-        }
-
-        function closeModal(e) {
-            if (e.target.closest('.modal-close') || !e.target.closest('.modal')) {
-                document.querySelector('.modal-overlay')?.remove();
-            }
-        }
-
-        /* ── Clear input error on focus ── */
-        document.addEventListener('focusin', (e) => {
-            if (e.target.tagName === 'INPUT') {
-                e.target.classList.remove('input-error');
-            }
-        });
-
-        /* ── Password toggle ── */
-        function togglePassword() {
-            const pw = document.getElementById('password');
-            const icon = document.getElementById('pwToggleIcon');
-            if (pw.type === 'password') {
-                pw.type = 'text'; icon.textContent = '🙈';
-            } else {
-                pw.type = 'password'; icon.textContent = '👁️';
-            }
-        }
-
-        /* ── Theme toggle ── */
-        function toggleTheme() {
-            const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            const current = html.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            icon.textContent = next === 'dark' ? '☀️' : '🌙';
-            try { localStorage.setItem('theme', next); } catch(e) {}
-        }
-
-        function initTheme() {
-            let theme = 'light';
-            try { theme = localStorage.getItem('theme') || 'light'; } catch(e) {}
-            document.documentElement.setAttribute('data-theme', theme);
-            document.getElementById('themeIcon').textContent = theme === 'dark' ? '☀️' : '🌙';
-        }
-
-        window.onload = () => {
-            initTheme();
-            initForm().catch(console.error);
-        };
-    </script>
+<meta charset="UTF-8">
+<title>Авторизация</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#1a1a2e">
+<style>
+:root{
+--bg:#f0f2f5;--surface:#fff;--surface2:#f8f9fb;--text:#1a1a2e;--text2:#5a5d6e;--text3:#8b8fa3;
+--border:#e2e5ec;--border2:#eef0f4;--primary:#4f6ef7;--primary-h:#3d5bd9;--primary-bg:#eef1fe;
+--primary-g:rgba(79,110,247,.15);--ok:#22c55e;--ok-bg:#eafaf1;--warn:#f59e0b;--warn-bg:#fffbe6;
+--warn-b:#fbbf24;--err:#ef4444;--err-bg:#fef2f2;--android:#689f38;--android-bg:#edf7e7;
+--android-g:rgba(104,159,56,.15);--console:#6d28d9;--console-bg:#f3eeff;
+--r:12px;--r-sm:8px;--r-lg:16px;--r-xl:20px;
+--sh:0 4px 12px rgba(0,0,0,.06);--sh-lg:0 12px 32px rgba(0,0,0,.08);
+--sh-xl:0 20px 48px rgba(0,0,0,.12);--t:.2s cubic-bezier(.4,0,.2,1);
+--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;
+--mono:'JetBrains Mono','Fira Code','SF Mono',monospace
+}
+[data-theme=dark]{
+--bg:#0f0f1a;--surface:#1a1a2e;--surface2:#222240;--text:#e4e6f0;--text2:#b0b3c5;--text3:#6e7191;
+--border:#2e2e4a;--border2:#252540;--primary:#6d8aff;--primary-h:#5a74e0;--primary-bg:#1e2240;
+--primary-g:rgba(109,138,255,.12);--ok:#34d399;--ok-bg:#0f2d24;--warn:#fbbf24;--warn-bg:#2d1f0a;
+--warn-b:#d97706;--err:#f87171;--err-bg:#2d0f0f;--android:#8bc34a;--android-bg:#1a2e0f;
+--android-g:rgba(139,195,74,.12);--console:#a78bfa;--console-bg:#1e1540;
+--sh:0 4px 12px rgba(0,0,0,.3);--sh-lg:0 12px 32px rgba(0,0,0,.4);--sh-xl:0 20px 48px rgba(0,0,0,.5)
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;
+-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;min-height:100vh;
+transition:background var(--t),color var(--t)}
+.container{max-width:760px;margin:0 auto;padding:24px 20px 40px;background:var(--surface);
+min-height:100vh;transition:background var(--t)}
+@media(min-width:768px){.container{padding:36px 40px 48px;margin:28px auto 40px;min-height:auto;
+border-radius:var(--r-xl);box-shadow:var(--sh-lg);border:1px solid var(--border2)}}
+@media(max-width:480px){.container{padding:18px 14px 32px}}
+/* header */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;
+padding-bottom:16px;border-bottom:1px solid var(--border2)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.15rem;color:var(--text)}
+.brand svg{flex-shrink:0}
+.theme-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);
+background:var(--surface2);cursor:pointer;font-size:1.2rem;
+display:flex;align-items:center;justify-content:center;transition:all var(--t);color:var(--text2)}
+.theme-btn:hover{background:var(--primary-bg);color:var(--primary);border-color:var(--primary)}
+/* title */
+.title{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.title h2{font-size:1.55rem;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:600;
+text-transform:uppercase;letter-spacing:.04em;padding:4px 10px;border-radius:100px;
+background:var(--primary-bg);color:var(--primary)}
+.ttype{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:600;
+padding:4px 10px;border-radius:100px;background:var(--surface2);color:var(--text2);
+margin-bottom:12px;border:1px solid var(--border)}
+/* warning */
+.warn-box{background:var(--warn-bg);border:1px solid var(--warn-b);border-left:4px solid var(--warn);
+padding:14px 16px;margin:0 0 24px;border-radius:var(--r);display:flex;align-items:flex-start;gap:11px}
+.warn-icon{font-size:20px;line-height:1.3;flex-shrink:0}
+.warn-text{font-size:.85rem;color:#92400e;line-height:1.55}
+[data-theme=dark] .warn-text{color:#fcd34d}
+/* instructions */
+.instr{background:var(--surface2);border-radius:var(--r-lg);padding:20px;margin:0 0 20px;
+border:1px solid var(--border2)}
+/* tabs */
+.tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;padding:4px;
+background:var(--border2);border-radius:var(--r)}
+.tab{padding:9px 16px;border-radius:var(--r-sm);cursor:pointer;background:transparent;
+transition:all var(--t);font-size:.84rem;font-weight:600;color:var(--text2);
+flex-shrink:0;border:none;white-space:nowrap}
+.tab:hover{color:var(--text);background:var(--surface)}
+.tab.active{background:var(--surface);color:var(--primary);box-shadow:var(--sh)}
+.tab.android{color:var(--android)}
+.tab.android.active{background:var(--android);color:#fff;box-shadow:0 2px 8px var(--android-g)}
+.tab.console{color:var(--console)}
+.tab.console.active{background:var(--console);color:#fff}
+/* steps */
+.step{margin-bottom:10px;padding:13px 14px;background:var(--surface);
+border-left:4px solid var(--primary);border-radius:var(--r-sm);font-size:.92rem;
+box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:flex-start;gap:10px}
+.step-num{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--primary-bg);
+color:var(--primary);font-weight:700;font-size:.78rem;
+display:flex;align-items:center;justify-content:center}
+.step.and{border-left-color:var(--android)}.step.and .step-num{background:var(--android-bg);color:var(--android)}
+.step.con{border-left-color:var(--console)}.step.con .step-num{background:var(--console-bg);color:var(--console)}
+.step-body{flex:1;line-height:1.55}
+.sub-step{margin:4px 0 4px 22px;padding:6px 0;color:var(--text2);font-size:.87rem;
+display:flex;align-items:flex-start;gap:8px}
+.sub-step::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--primary);
+flex-shrink:0;margin-top:7px}
+/* android note */
+.and-note{background:var(--android-bg);border:1px solid var(--android);padding:16px 18px;
+border-radius:var(--r);margin:0 0 16px}
+.and-note h3{margin:0 0 8px;color:var(--android);font-size:1rem;font-weight:700}
+.and-note p{font-size:.88rem;color:var(--text2);margin-bottom:12px}
+.dl-link{display:inline-flex;align-items:center;gap:6px;background:var(--android);color:#fff;
+padding:10px 20px;text-decoration:none;border-radius:100px;font-weight:700;font-size:.88rem;
+transition:all var(--t);box-shadow:0 2px 8px var(--android-g)}
+.dl-link:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--android-g)}
+/* code */
+.code-wrap{position:relative;margin:8px 0 12px}
+.code{background:#1e1e2e;color:#cdd6f4;padding:14px 44px 14px 16px;border-radius:var(--r-sm);
+font-family:var(--mono);font-size:.8rem;overflow-x:auto;line-height:1.6;white-space:pre-wrap;word-break:break-all}
+.copy-btn{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:6px;
+border:none;background:rgba(255,255,255,.1);color:#cdd6f4;cursor:pointer;font-size:.9rem;
+display:flex;align-items:center;justify-content:center;transition:all var(--t)}
+.copy-btn:hover{background:rgba(255,255,255,.2)}.copy-btn.copied{background:var(--ok);color:#fff}
+/* inputs */
+.input-group{margin:0 0 20px}
+.iwrap{position:relative;margin-bottom:10px}
+.iwrap .iicon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;
+color:var(--text3);pointer-events:none;transition:color var(--t)}
+.iwrap input{width:100%;padding:14px 14px 14px 44px;border:2px solid var(--border);
+border-radius:var(--r);font-size:.95rem;font-family:var(--font);background:var(--surface);
+color:var(--text);transition:all var(--t);outline:none}
+.iwrap input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-g)}
+.iwrap input.err{border-color:var(--err);box-shadow:0 0 0 4px rgba(239,68,68,.1)}
+.hint{font-size:.75rem;color:var(--text3);margin-top:-4px;margin-left:4px}
+.pw-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);
+background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--text3);padding:8px;line-height:1}
+.pw-toggle:hover{color:var(--text2)}
+/* button */
+.btn{background:var(--primary);color:#fff;padding:15px 24px;border:none;border-radius:var(--r);
+cursor:pointer;width:100%;font-size:1rem;font-weight:700;transition:all var(--t);
+font-family:var(--font);touch-action:manipulation;display:flex;align-items:center;
+justify-content:center;gap:8px;box-shadow:0 4px 16px var(--primary-g)}
+.btn:hover{background:var(--primary-h);transform:translateY(-1px);box-shadow:0 8px 24px var(--primary-g)}
+.btn:active{transform:translateY(0)}.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);
+border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;
+justify-content:center;align-items:center;z-index:1000;padding:20px;
+backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:ovShow .2s ease}
+@keyframes ovShow{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surface);padding:28px 26px;border-radius:var(--r-lg);width:100%;
+max-width:420px;position:relative;animation:modShow .3s cubic-bezier(.175,.885,.32,1.275);
+box-shadow:var(--sh-xl);border:1px solid var(--border2)}
+@keyframes modShow{from{transform:translateY(20px) scale(.96);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.modal-close{position:absolute;top:12px;right:14px;background:var(--surface2);border:none;
+width:32px;height:32px;border-radius:50%;font-size:1.1rem;cursor:pointer;color:var(--text2);
+display:flex;align-items:center;justify-content:center;transition:all var(--t)}
+.modal-close:hover{background:var(--err-bg);color:var(--err)}
+.modal-content{display:flex;align-items:flex-start;gap:14px;font-size:.95rem;line-height:1.55}
+.modal-icon{flex-shrink:0;width:44px;height:44px;border-radius:50%;
+display:flex;align-items:center;justify-content:center}
+.modal-icon.e{background:var(--err-bg)}.modal-icon.i{background:var(--primary-bg)}.modal-icon.s{background:var(--ok-bg)}
+/* skeleton */
+.skel{background:linear-gradient(90deg,var(--border2)25%,var(--border)50%,var(--border2)75%);
+background-size:200% 100%;animation:shim 1.5s ease-in-out infinite;border-radius:4px}
+@keyframes shim{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.skel-ln{height:14px;margin-bottom:10px}.skel-ln.lg{height:20px;width:60%}.skel-ln.sm{height:10px;width:80%}
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e2e;
+color:#fff;padding:12px 22px;border-radius:100px;font-size:.85rem;font-weight:600;
+z-index:2000;box-shadow:var(--sh-xl);animation:toastIn .3s ease}
+@keyframes toastIn{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+.empty{text-align:center;padding:24px;color:var(--text3);font-size:.9rem}
+.hidden{display:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.platform-content{animation:fadeIn .25s ease}
+@media(max-width:480px){.step{padding:11px 12px;font-size:.85rem}.tab{padding:7px 12px;font-size:.78rem}
+.btn{padding:14px;font-size:.95rem}.title h2{font-size:1.3rem}}
+</style>
+<script async src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div class="container">
-        <!-- ── Header ── -->
-        <div class="app-header">
-            <div class="brand">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="3" width="20" height="14" rx="2"/>
-                    <line x1="8" y1="21" x2="16" y2="21"/>
-                    <line x1="12" y1="17" x2="12" y2="21"/>
-                </svg>
-                Авторизация
-            </div>
-            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему" id="themeButton">
-                <span id="themeIcon">🌙</span>
-            </button>
-        </div>
+<div class="container">
+<div class="header">
+<div class="brand">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+Авторизация
+</div>
+<button class="theme-btn" onclick="toggleTheme()" aria-label="Тема"><span id="ti">🌙</span></button>
+</div>
+<div class="title"><h2 id="sn"></h2><span class="badge" id="mb"></span></div>
+<div id="tt" class="ttype hidden"></div>
+<div class="warn-box"><div class="warn-icon">⚠️</div><div class="warn-text"><strong>ВНИМАНИЕ:</strong> Использование неофициальных методов авторизации может нарушать условия использования сервиса и привести к блокировке аккаунта. <strong>Вы используете этот инструмент на свой страх и риск.</strong></div></div>
+<div class="instr" id="instr"></div>
+<div class="input-group">
+<div id="loginForm" class="hidden">
+<div class="iwrap"><span class="iicon">📧</span><input id="login" placeholder="Логин" autocomplete="email"></div>
+<div class="iwrap"><span class="iicon">🔒</span><input type="password" id="password" placeholder="Пароль" autocomplete="current-password"><button class="pw-toggle" onclick="togglePw()" aria-label="Показать пароль"><span id="pwi">👁️</span></button></div>
+<div class="hint">Данные передаются только боту и не сохраняются</div>
+</div>
+<div id="tokenForm" class="hidden">
+<div class="iwrap"><span class="iicon">🔑</span><input id="token" placeholder="Введите токен" autocomplete="off"></div>
+<div class="hint">Вставьте скопированный токен в это поле</div>
+</div>
+</div>
+<button class="btn" onclick="submitData()"><span>✅</span> Подтвердить</button>
+</div>
+<script>
+async function loadConfig(site){try{const r=await fetch('configs/'+site+'.config.json');if(!r.ok)throw Error('Конфиг не найден');return await r.json()}catch(e){showModal('Ошибка загрузки конфига: '+site);console.error(e);return null}}
 
-        <!-- ── Title ── -->
-        <div class="site-title">
-            <h2 id="siteName"></h2>
-            <span class="site-badge" id="methodBadge"></span>
-        </div>
-        <div id="tokenTypeBadge" class="token-type-badge hidden"></div>
+function showModal(msg,type){type=type||'error';const icons={error:'❌',info:'ℹ️',success:'✅'};const wc=type==='error'?'e':type==='success'?'s':'i';const h='<div class="modal-overlay" onclick="closeModal(event)"><div class="modal"><button class="modal-close" onclick="closeModal(event)">✕</button><div class="modal-content"><div class="modal-icon '+wc+'"><span style="font-size:1.4rem">'+(icons[type]||icons.error)+'</span></div><div>'+msg+'</div></div></div></div>';document.body.insertAdjacentHTML('beforeend',h)}
 
-        <!-- ── Warning ── -->
-        <div class="warning-box">
-            <div class="warning-icon">⚠️</div>
-            <div class="warning-text">
-                <strong>ВНИМАНИЕ:</strong> Использование неофициальных методов авторизации может нарушать условия использования сервиса и привести к блокировке вашего аккаунта. <strong>Вы используете этот инструмент на свой страх и риск.</strong>
-            </div>
-        </div>
+function showToast(msg,d){d=d||2000;const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(function(){t.remove()},300)},d)}
 
-        <!-- ── Dynamic instructions ── -->
-        <div class="instructions" id="dynamic-instructions"></div>
+function escapeHTML(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
-        <!-- ── Inputs ── -->
-        <div class="input-group">
-            <div id="loginForm" class="hidden">
-                <div class="input-wrapper">
-                    <span class="input-icon">📧</span>
-                    <input type="text" id="login" placeholder="Логин" required autocomplete="email">
-                </div>
-                <div class="input-wrapper">
-                    <span class="input-icon">🔒</span>
-                    <input type="password" id="password" placeholder="Пароль" required autocomplete="current-password">
-                    <button type="button" class="pw-toggle" onclick="togglePassword()" aria-label="Показать пароль">
-                        <span id="pwToggleIcon">👁️</span>
-                    </button>
-                </div>
-                <div class="input-hint">Ваши данные передаются только боту и не сохраняются на стороне сервера</div>
-            </div>
+function generateSteps(steps,stepNum,pt){stepNum=stepNum||1;pt=pt||'';const isA=pt==='android';const isC=pt==='console';const sc='step'+(isA?' and':isC?' con':'');const nc=isA?' and':isC?' con':'';return steps.map(function(s,i){const cs=stepNum+i;if(Array.isArray(s))return'<div class="sub-step">'+s.map(function(x){return'<div>'+x+'</div>'}).join('')+'</div>';const wc=s.replace(/`([^`]+)`/g,'<code style="background:var(--surface2);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:0.85em;border:1px solid var(--border);">$1</code>');return'<div class="'+sc+'"><span class="step-num'+nc+'">'+cs+'</span><span class="step-body">'+wc+'</span></div>'}).join('')}
 
-            <div id="tokenForm" class="hidden">
-                <div class="input-wrapper">
-                    <span class="input-icon">🔑</span>
-                    <input type="text" id="token" placeholder="Введите токен" required autocomplete="off">
-                </div>
-                <div class="input-hint">Вставьте скопированный токен в это поле</div>
-            </div>
-        </div>
+function copyCode(btn,code){const t=document.createElement('textarea');t.innerHTML=code;navigator.clipboard.writeText(t.value).then(function(){btn.textContent='✓';btn.classList.add('copied');showToast('Скопировано в буфер обмена');setTimeout(function(){btn.textContent='📋';btn.classList.remove('copied')},2000)}).catch(function(){showToast('Не удалось скопировать',1500)})}
 
-        <!-- ── Submit ── -->
-        <button class="btn-primary" onclick="submitData()">
-            <span>✅</span> Подтвердить
-        </button>
-    </div>
+function getQueryParam(n){return new URLSearchParams(window.location.search).get(n)}
+
+function showPlatform(k){document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.dataset.platform===k)});document.querySelectorAll('.platform-content').forEach(function(d){d.classList.toggle('hidden',d.dataset.platform!==k)})}
+
+async function initForm(){if(!validateParams())return;const method=getQueryParam('method');const site=getQueryParam('site');const ic=document.getElementById('instr');ic.innerHTML='<div class="skel skel-ln lg"></div><div class="skel skel-ln"></div><div class="skel skel-ln sm"></div>';const config=await loadConfig(site);if(!config||!config[method]){showModal('Конфигурация не найдена');return}document.title=site;document.getElementById('sn').textContent=site;document.getElementById(method+'Form').classList.remove('hidden');const mc=config[method];const tte=document.getElementById('tt');if(method==='token'&&mc.type){tte.textContent=mc.type==='bearer'?'🔐 Bearer Token':'🔑 '+mc.type;tte.classList.remove('hidden')}document.getElementById('mb').textContent=method==='token'?'🔑 Токен':'👤 Логин';if(mc.platforms){let tabs='<div class="tabs">';let content='';let first=true;for(const[k,pd]of Object.entries(mc.platforms)){const ptype=(k==='android')?'android':(k==='console')?'console':'';const ac=first?' active':'';const tc=ptype?' '+ptype:'';tabs+='<button class="tab'+tc+ac+'" data-platform="'+k+'" onclick="showPlatform(\''+k+'\')">'+pd.name+'</button>';let pc='';if(ptype==='android'&&pd.downloadLink){pc+='<div class="and-note"><h3>🤖 Рекомендуемый способ</h3><p>Самый простой способ — использовать Android-приложение:</p><a href="'+pd.downloadLink+'" class="dl-link" target="_blank" rel="noopener">📱 Скачать Android-приложение</a></div>'}if(pd.steps&&pd.steps.length>0){pc+=generateSteps(pd.steps,1,ptype)}else{pc+='<div class="empty">📝 Инструкция появится позже</div>'}content+='<div class="platform-content'+(first?'':' hidden')+'" data-platform="'+k+'">'+pc+'</div>';first=false}tabs+='</div>';ic.innerHTML=tabs+content}else{ic.innerHTML=generateSteps(mc.steps)}}
+
+function validateParams(){const req=['method','site'];const miss=req.filter(function(p){return!getQueryParam(p)});if(miss.length>0){showModal('Отсутствуют параметры: '+miss.join(', '));document.querySelector('.container').classList.add('hidden');return false}const vm=['token','login'];const m=getQueryParam('method');if(vm.indexOf(m)===-1){showModal('Недопустимый метод: '+m);document.querySelector('.container').classList.add('hidden');return false}return true}
+
+function submitData(){const method=getQueryParam('method');let ad={method:method,site:getQueryParam('site')};if(method==='login'){ad.login=document.getElementById('login').value.trim();ad.password=document.getElementById('password').value;if(!ad.login||!ad.password){showModal('Заполните все поля!');if(!ad.login)document.getElementById('login').classList.add('err');if(!ad.password)document.getElementById('password').classList.add('err');return}}else{ad.token=document.getElementById('token').value.trim();if(!ad.token){showModal('Введите токен!');document.getElementById('token').classList.add('err');return}}const btn=document.querySelector('.btn');const orig=btn.innerHTML;btn.innerHTML='<span class="spinner"></span> Отправка...';btn.disabled=true;try{Telegram.WebApp.sendData(JSON.stringify(ad));Telegram.WebApp.close()}catch(e){btn.innerHTML=orig;btn.disabled=false;showModal('Ошибка отправки. Попробуйте ещё раз.')}}
+
+function closeModal(e){if(e.target.closest('.modal-close')||!e.target.closest('.modal')){const o=document.querySelector('.modal-overlay');if(o)o.remove()}}
+
+document.addEventListener('focusin',function(e){if(e.target.tagName==='INPUT')e.target.classList.remove('err')});
+
+function togglePw(){const pw=document.getElementById('password');const icon=document.getElementById('pwi');if(pw.type==='password'){pw.type='text';icon.textContent='🙈'}else{pw.type='password';icon.textContent='👁️'}}
+
+function toggleTheme(){const html=document.documentElement;const icon=document.getElementById('ti');const cur=html.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';html.setAttribute('data-theme',next);icon.textContent=next==='dark'?'☀️':'🌙';try{localStorage.setItem('theme',next)}catch(e){}}
+
+(function(){let theme='light';try{theme=localStorage.getItem('theme')||'light'}catch(e){}document.documentElement.setAttribute('data-theme',theme);document.getElementById('ti').textContent=theme==='dark'?'☀️':'🌙'})();
+
+window.onload=function(){initForm().catch(console.error)};
+</script>
 </body>
 </html>
